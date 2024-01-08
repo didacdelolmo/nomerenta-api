@@ -2,6 +2,9 @@ const ErrorCode = {
   SOMETHING_WENT_WRONG: 0,
   VALIDATION_ERROR: 1,
   INVALID_ROLE_PERMISSION: 2,
+  INVALID_IMAGE: 3,
+  INVALID_USER: 4,
+  IMAGE_TOO_BIG: 5,
 };
 
 export default ErrorCode;
