@@ -1,5 +1,5 @@
-import ErrorCode from './error-code';
-import IdentifiedError from './identified-error';
+import ErrorCode from './error-code.mjs';
+import IdentifiedError from './identified-error.mjs';
 import { isCelebrateError } from 'celebrate';
 
 const errorHandler = (error, req, res, next) => {

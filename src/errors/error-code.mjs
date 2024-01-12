@@ -5,6 +5,8 @@ const ErrorCode = {
   INVALID_IMAGE: 3,
   INVALID_USER: 4,
   IMAGE_TOO_BIG: 5,
+  USERNAME_TAKEN: 6,
+  INVALID_CREDENTIALS: 7,
 };
 
 export default ErrorCode;

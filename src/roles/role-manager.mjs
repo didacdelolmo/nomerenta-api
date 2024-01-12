@@ -1,6 +1,6 @@
-import Member from './member';
-import Premium from './premium';
-import RoleIdentifier from './role-identifier';
+import Member from './member.mjs';
+import Premium from './premium.mjs';
+import RoleIdentifier from './role-identifier.mjs';
 
 class RoleManager {
   static roles = {

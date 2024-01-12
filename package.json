@@ -1,10 +1,10 @@
 {
   "name": "nomerenta-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node index.mjs",
+    "dev": "nodemon index.mjs",
     "test": "mocha --timeout 5000 --reporter mochawesome ./tests/**/*.js"
   },
   "keywords": [],

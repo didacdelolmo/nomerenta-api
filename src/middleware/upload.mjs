@@ -1,6 +1,6 @@
 import multer from 'multer';
 import path from 'path';
-import { imageFilter } from '../utils/image';
+import { imageFilter } from '../utils/image.mjs';
 import sanitize from 'sanitize-filename';
 
 const storage = multer.diskStorage({

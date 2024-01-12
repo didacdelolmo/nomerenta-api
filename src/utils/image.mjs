@@ -1,5 +1,5 @@
-import ErrorCode from '../errors/error-code';
-import IdentifiedError from '../errors/identified-error';
+import ErrorCode from '../errors/error-code.mjs';
+import IdentifiedError from '../errors/identified-error.mjs';
 import path from 'path';
 
 export const imageFilter = (req, file, cb) => {

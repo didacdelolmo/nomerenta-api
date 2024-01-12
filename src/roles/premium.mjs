@@ -1,4 +1,4 @@
-import Role from './role';
+import Role from './role.mjs';
 
 class Premium extends Role {
   canChangeAvatar() {

@@ -1,5 +1,5 @@
-import ErrorCode from '../errors/error-code';
-import IdentifiedError from '../errors/identified-error';
+import ErrorCode from '../errors/error-code.mjs';
+import IdentifiedError from '../errors/identified-error.mjs';
 
 class Role {
   canChangeAvatar() {

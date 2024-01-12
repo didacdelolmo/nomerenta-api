@@ -1,12 +1,36 @@
 import sharp from 'sharp';
-import ErrorCode from '../errors/error-code';
-import IdentifiedError from '../errors/identified-error';
-import UserModel from '../models/user-model';
+import ErrorCode from '../errors/error-code.mjs';
+import IdentifiedError from '../errors/identified-error.mjs';
 import sanitize from 'sanitize-filename';
 import fs from 'fs';
+import UserModel from '../models/user-model.mjs';
 
 export async function getById(userId) {
   return UserModel.findById(userId);
+}
+
+export async function getByUsername(username, includeHashedPassword = false) {
+  return UserModel.findOne({ username }).select(
+    includeHashedPassword ? '+hashedPassword' : '-hashedPassword'
+  );
+}
+
+export async function exists(username) {
+  return UserModel.exists({ username });
+}
+
+export async function create(username, hashedPassword) {
+  const user = await UserModel.create({
+    username,
+    hashedPassword,
+  });
+
+  console.log(
+    `🌺 [user-service]: Created a new user with username ${username}`,
+    user
+  );
+
+  return user;
 }
 
 export async function setAvatar(userId, avatar) {
