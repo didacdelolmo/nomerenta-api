@@ -14,7 +14,7 @@ export async function register({ username, password }) {
 
   const user = await userService.create(username, hashedPassword);
 
-  return user;
+  return user.withoutHashedPassword();
 }
 
 export async function login({ username, password }) {
@@ -34,5 +34,5 @@ export async function login({ username, password }) {
     );
   }
 
-  return user;
+  return user.withoutHashedPassword();
 }

@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node index.mjs",
     "dev": "nodemon index.mjs",
-    "test": "mocha --timeout 5000 --reporter mochawesome ./tests/**/*.js"
+    "test": "mocha --timeout 5000 --reporter mochawesome ./tests/**/*.mjs"
   },
   "keywords": [],
   "author": "",

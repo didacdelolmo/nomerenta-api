@@ -6,6 +6,12 @@ const UserSchema = new Schema({
   avatar: { type: String, default: null }, // what will the default img be
 });
 
+UserSchema.methods.withoutHashedPassword = function () {
+  const object = this.toObject();
+  delete object.hashedPassword;
+  return object;
+}
+
 const UserModel = model('User', UserSchema);
 
 export default UserModel;
