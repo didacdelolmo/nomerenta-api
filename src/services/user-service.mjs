@@ -34,15 +34,19 @@ export async function create(username, hashedPassword) {
 }
 
 export async function setAvatar(userId, avatar) {
+  
   const user = await getById(userId);
   if (!user) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Invalid user');
   }
+  console.log('2');
 
   const sanitizedAvatar = sanitize(avatar);
   await sharp(sanitizedAvatar).resize(128, 128).toFile(sanitizedAvatar);
 
   const stats = await fs.stat(sanitizedAvatar);
+
+  console.log('3');
 
   const fileSizeInBytes = stats.size;
   const maxSizeInBytes = 1024 * 1024;
@@ -51,8 +55,14 @@ export async function setAvatar(userId, avatar) {
     throw new IdentifiedError(ErrorCode.IMAGE_TOO_BIG, 'Image is too big');
   }
 
+  console.log('4');
+
+
   user.avatar = sanitizedAvatar;
   await user.save();
+
+  console.log('5');
+
 
   console.log(
     `📷 [user-service]: Updated the avatar from user ${user.username}`,
