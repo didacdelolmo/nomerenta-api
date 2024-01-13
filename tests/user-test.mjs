@@ -3,6 +3,8 @@ import supertest from 'supertest';
 import app from '../src/app.mjs';
 import assert from 'assert';
 import UserFixture from './fixtures/user-fixture.mjs';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 describe('User endpoints', () => {
   let user;
@@ -36,10 +38,12 @@ describe('User endpoints', () => {
 
   it('POST /users/me/avatar', async () => {
     try {
+      const dir = dirname(fileURLToPath(import.meta.url));
+
       const response = await supertest(app)
         .post('/users/me/avatar')
         .set('Cookie', user.cookie)
-        .attach('avatar', './avatars/avatar.jpg');
+        .attach('avatar', `${dir}/avatars/avatar.jpg`);
         
       assert.strictEqual(response.status, 200);
     } catch (error) {

@@ -15,5 +15,6 @@ export async function login(req, res) {
 export async function updateAvatar(req, res) {
   console.log('1')
   console.log('gigi')
-  res.send(await userService.setAvatar(req.session.userId, req.file.path));
+  // res.send(await userService.setAvatar(req.session.userId, req.file.path));
+  res.json('aa')
 }

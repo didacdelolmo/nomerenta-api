@@ -16,9 +16,9 @@ router.post('/login', validateAuthInput, tryCatch(userController.login));
 
 router.post(
   '/users/me/avatar',
-  isAuthenticated,
-  validateAvatarInput,
-  upload.single('avatar'),
+  // isAuthenticated,
+  // validateAvatarInput,
+  // upload.single('avatar'),
   tryCatch(userController.updateAvatar)
 );
 
