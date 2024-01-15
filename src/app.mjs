@@ -13,6 +13,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(sessionHandler);
 app.use(errorHandler);
 
+app.use('/avatars', express.static('assets/avatars'));
+
 app.use(userRouter);
 
 export default app;

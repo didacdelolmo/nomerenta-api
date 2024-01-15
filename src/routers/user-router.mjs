@@ -4,7 +4,7 @@ import {
   validateAuthInput,
   validateAvatarInput,
 } from '../validation/user-validation.mjs';
-import upload from '../middleware/upload.mjs';
+import uploadAvatar from '../middleware/upload-avatar.mjs';
 import { tryCatch } from '../utils/try-catch.mjs';
 import * as userController from '../controllers/user-controller.mjs';
 
@@ -16,9 +16,8 @@ router.post('/login', validateAuthInput, tryCatch(userController.login));
 
 router.post(
   '/users/me/avatar',
-  // isAuthenticated,
+  isAuthenticated,
   // validateAvatarInput,
-  // upload.single('avatar'),
   tryCatch(userController.updateAvatar)
 );
 

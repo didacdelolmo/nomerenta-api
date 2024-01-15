@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import app from '../src/app.mjs';
 import assert from 'assert';
 import UserFixture from './fixtures/user-fixture.mjs';
-import path, { dirname } from 'path';
+import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 describe('User endpoints', () => {
@@ -37,17 +37,15 @@ describe('User endpoints', () => {
   });
 
   it('POST /users/me/avatar', async () => {
-    try {
-      const dir = dirname(fileURLToPath(import.meta.url));
+    const pathString = fileURLToPath(import.meta.url);
+    const dirString = dirname(pathString);
+    const absolutePath = resolve(dirString, 'avatars/index.mp3');
 
-      const response = await supertest(app)
-        .post('/users/me/avatar')
-        .set('Cookie', user.cookie)
-        .attach('avatar', `${dir}/avatars/avatar.jpg`);
-        
-      assert.strictEqual(response.status, 200);
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await supertest(app)
+      .post('/users/me/avatar')
+      .set('Cookie', user.cookie)
+      .attach('avatar', absolutePath);
+
+    assert.strictEqual(response.status, 200);
   });
 });

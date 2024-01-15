@@ -1,9 +1,11 @@
 import sharp from 'sharp';
 import ErrorCode from '../errors/error-code.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
-import sanitize from 'sanitize-filename';
-import fs from 'fs';
 import UserModel from '../models/user-model.mjs';
+import path, { resolve } from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs/promises';
 
 export async function getById(userId) {
   return UserModel.findById(userId);
@@ -34,38 +36,39 @@ export async function create(username, hashedPassword) {
 }
 
 export async function setAvatar(userId, avatar) {
-  
   const user = await getById(userId);
   if (!user) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Invalid user');
   }
-  console.log('2');
 
-  const sanitizedAvatar = sanitize(avatar);
-  await sharp(sanitizedAvatar).resize(128, 128).toFile(sanitizedAvatar);
+  const pathString = fileURLToPath(import.meta.url);
+  const dirString = dirname(pathString);
 
-  const stats = await fs.stat(sanitizedAvatar);
+  const absolutePathResized = resolve(
+    dirString,
+    `../../assets/avatars/${userId}${path.extname(avatar)}`
+  );
+  const absolutePathSanitized = resolve(
+    dirString,
+    `../../assets/avatars/${userId}-sanitized${path.extname(avatar)}`
+  );
 
-  console.log('3');
+  const resizeResult = await sharp(avatar)
+    .resize(128, 128)
+    .toFile(absolutePathResized);
 
-  const fileSizeInBytes = stats.size;
-  const maxSizeInBytes = 1024 * 1024;
+  await fs.unlink(absolutePathSanitized);
 
-  if (fileSizeInBytes > maxSizeInBytes) {
+  if (resizeResult.size > 1024 * 1024) {
+    await fs.unlink(absolutePathResized);
     throw new IdentifiedError(ErrorCode.IMAGE_TOO_BIG, 'Image is too big');
   }
 
-  console.log('4');
-
-
-  user.avatar = sanitizedAvatar;
+  user.avatar = `${userId}${path.extname(avatar)}`;
   await user.save();
 
-  console.log('5');
-
-
   console.log(
-    `📷 [user-service]: Updated the avatar from user ${user.username}`,
+    `📷 [user-service]: Updated the avatar for user ${user.username}`,
     user
   );
 

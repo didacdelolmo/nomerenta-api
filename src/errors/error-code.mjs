@@ -7,6 +7,7 @@ const ErrorCode = {
   IMAGE_TOO_BIG: 5,
   USERNAME_TAKEN: 6,
   INVALID_CREDENTIALS: 7,
+  INVALID_AVATAR: 8,
 };
 
 export default ErrorCode;
