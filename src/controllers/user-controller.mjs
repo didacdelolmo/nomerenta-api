@@ -17,7 +17,7 @@ export async function login(req, res) {
 export async function updateAvatar(req, res) {
   uploadAvatar(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      console.error('aaaaaaaaaaaaaaaa');
+      // console.error('aaaaaaaaaaaaaaaa');
     }
   })
   res.send(await userService.setAvatar(req.session.userId, req.file.path));
