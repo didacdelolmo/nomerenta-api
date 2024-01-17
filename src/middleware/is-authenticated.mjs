@@ -6,6 +6,7 @@ export const isAuthenticated = (req, res, next) => {
   if (!authenticated) {
     throw new IdentifiedError(ErrorCode.UNAUTHORIZED, 'Unauthorized');
   }
-  console.log('wasd')
   next();
 };
+
+export default isAuthenticated;

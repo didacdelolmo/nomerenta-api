@@ -1,20 +1,9 @@
 import multer from 'multer';
-import path from 'path';
 import { imageFilter } from '../utils/image.mjs';
-import sanitize from 'sanitize-filename';
 
-const storage = multer.diskStorage({
-  destination: 'assets/avatars',
-  filename: function (req, file, cb) {
-    const sanitizedFilename = sanitize(file.originalname);
-    cb(null, `${req.session.userId}-sanitized${path.extname(sanitizedFilename)}`);
-  },
-});
-
-const uploadAvatar = multer({
-  storage,
+export const uploadAvatar = multer({
+  storage: multer.memoryStorage(),
   fileFilter: imageFilter,
-  limits: { fileSize: 1024 * 1024 * 5 },
+  // (!) The limit is 1 MB, not 1.1 MB
+  limits: { fileSize: 1.1 * 1024 * 1024 },
 }).single('avatar');
-
-export default uploadAvatar;

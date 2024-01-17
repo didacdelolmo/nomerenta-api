@@ -2,10 +2,10 @@ import sharp from 'sharp';
 import ErrorCode from '../errors/error-code.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import UserModel from '../models/user-model.mjs';
-import path, { resolve } from 'path';
-import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import { dirname, extname, resolve } from 'path';
+import sanitize from 'sanitize-filename';
 
 export async function getById(userId) {
   return UserModel.findById(userId);
@@ -41,30 +41,29 @@ export async function setAvatar(userId, avatar) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Invalid user');
   }
 
+  const sanitizedAvatar = sanitize(avatar.originalname);
+
   const pathString = fileURLToPath(import.meta.url);
   const dirString = dirname(pathString);
 
-  const absolutePathResized = resolve(
-    dirString,
-    `../../assets/avatars/${userId}${path.extname(avatar)}`
-  );
-  const absolutePathSanitized = resolve(
-    dirString,
-    `../../assets/avatars/${userId}-sanitized${path.extname(avatar)}`
-  );
+  const fileName = userId + extname(sanitizedAvatar);
 
-  const resizeResult = await sharp(avatar)
-    .resize(128, 128)
-    .toFile(absolutePathResized);
+  const absolutePath = resolve(dirString, `../../assets/avatars/${fileName}`);
 
-  await fs.unlink(absolutePathSanitized);
-
-  if (resizeResult.size > 1024 * 1024) {
-    await fs.unlink(absolutePathResized);
+  if (avatar.size > 1 * (1024 * 1024)) {
     throw new IdentifiedError(ErrorCode.IMAGE_TOO_BIG, 'Image is too big');
   }
 
-  user.avatar = `${userId}${path.extname(avatar)}`;
+  const resizeResult = await sharp(avatar.buffer)
+    .resize(256, 256)
+    .toFile(absolutePath);
+  // Must double-check if sharp can replace files
+
+  if (resizeResult.size > 1 * 1024 * 1024) {
+    throw new IdentifiedError(ErrorCode.IMAGE_TOO_BIG, 'Image is too big');
+  }
+
+  user.avatar = fileName;
   await user.save();
 
   console.log(

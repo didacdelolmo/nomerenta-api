@@ -39,7 +39,7 @@ describe('User endpoints', () => {
   it('POST /users/me/avatar', async () => {
     const pathString = fileURLToPath(import.meta.url);
     const dirString = dirname(pathString);
-    const absolutePath = resolve(dirString, 'avatars/index.mp3');
+    const absolutePath = resolve(dirString, 'avatars/avatar.jpg');
 
     const response = await supertest(app)
       .post('/users/me/avatar')

@@ -1,12 +1,11 @@
 import express from 'express';
-import { isAuthenticated } from '../middleware/is-authenticated.mjs';
 import {
   validateAuthInput,
-  validateAvatarInput,
 } from '../validation/user-validation.mjs';
-import uploadAvatar from '../middleware/upload-avatar.mjs';
 import { tryCatch } from '../utils/try-catch.mjs';
 import * as userController from '../controllers/user-controller.mjs';
+import { uploadAvatar } from '../middleware/upload-avatar.mjs';
+import isAuthenticated from '../middleware/is-authenticated.mjs';
 
 const router = express.Router();
 
@@ -18,6 +17,7 @@ router.post(
   '/users/me/avatar',
   isAuthenticated,
   // validateAvatarInput,
+  uploadAvatar,
   tryCatch(userController.updateAvatar)
 );
 
