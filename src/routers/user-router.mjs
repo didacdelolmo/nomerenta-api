@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   validateAuthInput,
+  validateAvatarInput,
 } from '../validation/user-validation.mjs';
 import { tryCatch } from '../utils/try-catch.mjs';
 import * as userController from '../controllers/user-controller.mjs';
@@ -16,8 +17,8 @@ router.post('/login', validateAuthInput, tryCatch(userController.login));
 router.post(
   '/users/me/avatar',
   isAuthenticated,
-  // validateAvatarInput,
   uploadAvatar,
+  validateAvatarInput,
   tryCatch(userController.updateAvatar)
 );
 

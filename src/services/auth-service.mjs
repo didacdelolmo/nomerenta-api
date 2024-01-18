@@ -5,7 +5,7 @@ import ErrorCode from '../errors/error-code.mjs';
 
 /** Have to double check if username checks are case sensitive */
 export async function register({ username, password }) {
-  const existsUser = await userService.exists(username);
+  const existsUser = await userService.existsUsername(username);
   if (existsUser) {
     throw new IdentifiedError(ErrorCode.USERNAME_TAKEN, 'Username is taken');
   }

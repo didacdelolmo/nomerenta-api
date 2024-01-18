@@ -1,4 +1,6 @@
 import { celebrate, Joi } from 'celebrate';
+import IdentifiedError from '../errors/identified-error.mjs';
+import ErrorCode from '../errors/error-code.mjs';
 
 export const validateAuthInput = (req, res, next) => {
   celebrate({
@@ -9,10 +11,10 @@ export const validateAuthInput = (req, res, next) => {
   })(req, res, next);
 };
 
+/** Must be used AFTER avatar multer upload middleware */
 export const validateAvatarInput = (req, res, next) => {
-  celebrate({
-    body: {
-      avatar: Joi.any().required(),
-    },
-  })(req, res, next);
+  if (!req.file) {
+    throw new IdentifiedError(ErrorCode.IMAGE_REQUIRED, 'An image is required');
+  }
+  next();
 };

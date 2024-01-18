@@ -3,7 +3,6 @@ import ErrorCode from '../errors/error-code.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import UserModel from '../models/user-model.mjs';
 import { fileURLToPath } from 'url';
-import fs from 'fs/promises';
 import { dirname, extname, resolve } from 'path';
 import sanitize from 'sanitize-filename';
 
@@ -17,7 +16,11 @@ export async function getByUsername(username, includeHashedPassword = false) {
   );
 }
 
-export async function exists(username) {
+export async function existsId(userId) {
+  return UserModel.exists({ _id: userId });
+}
+
+export async function existsUsername(username) {
   return UserModel.exists({ username });
 }
 

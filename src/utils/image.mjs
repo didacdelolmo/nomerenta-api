@@ -11,7 +11,7 @@ export const imageFilter = (req, file, cb) => {
   } else {
     cb(null, false);
     return cb(
-      new IdentifiedError(ErrorCode.INVALID_IMAGE, 'Invalid image extension')
+      new IdentifiedError(ErrorCode.INVALID_IMAGE_EXTENSION, 'Invalid image extension')
     );
   }
 };
