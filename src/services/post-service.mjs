@@ -34,6 +34,10 @@ export async function getAll({ sortBy = 'score', start = 0, limit = null }) {
   return posts;
 }
 
+export async function existsId(postId) {
+  return PostModel.exists({ _id: postId });
+}
+
 export async function create(userId, { title, content }) {
   const existsUser = await userService.existsId(userId);
   if (!existsUser) {

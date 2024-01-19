@@ -1,4 +1,5 @@
 import { Schema, Types, model } from 'mongoose';
+import { getHierarchicalComments } from '../services/comment-service.mjs';
 
 const PostSchema = new Schema(
   {
@@ -10,15 +11,6 @@ const PostSchema = new Schema(
     },
     title: { type: String, required: true },
     content: { type: String, required: true },
-    comments: {
-      type: [
-        {
-          ref: 'Comment',
-          type: Types.ObjectId,
-        },
-      ],
-      default: [],
-    },
     upvotes: {
       type: [
         {
@@ -41,6 +33,18 @@ const PostSchema = new Schema(
   },
   { timestamps: true }
 );
+
+/**
+ * This is NOT a hierarchical output
+ * @see getHierarchicalComments
+ */
+PostSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'post',
+  justOne: false,
+  options: { sort: { createdAt: 1 } },
+});
 
 PostSchema.pre('save', function (next) {
   this.score = this.upvotes.length - this.downvotes.length;

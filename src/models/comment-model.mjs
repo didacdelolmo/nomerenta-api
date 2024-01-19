@@ -1,22 +1,33 @@
 import { Schema, Types, model } from 'mongoose';
+import autopopulate from 'mongoose-autopopulate';
 
-const CommentSchema = new Schema({
-  author: {
-    ref: 'User',
-    type: Types.ObjectId,
-    required: true,
-    index: true,
+const CommentSchema = new Schema(
+  {
+    author: {
+      ref: 'User',
+      type: Types.ObjectId,
+      required: true,
+      index: true,
+    },
+    post: {
+      ref: 'Post',
+      type: Types.ObjectId,
+      required: true,
+    },
+    parent: {
+      ref: 'Comment',
+      type: Types.ObjectId,
+      default: null,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
   },
-  replies: {
-    type: [
-      {
-        ref: 'Comment',
-        type: Types.ObjectId,
-      },
-    ],
-    default: [],
-  },
-}, { timestamps: true });
+  { timestamps: true }
+);
+
+CommentSchema.plugin(autopopulate);
 
 const CommentModel = model('Comment', CommentSchema);
 

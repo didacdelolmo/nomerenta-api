@@ -10,6 +10,8 @@ const ErrorCode = {
   INVALID_AVATAR: 8,
   IMAGE_REQUIRED: 9,
   INVALID_REQUEST_INPUT: 10,
+  INVALID_POST: 11,
+  INVALID_COMMENT_PARENT: 12,
 };
 
 export default ErrorCode;
