@@ -21,25 +21,25 @@ describe('Post endpoints', () => {
     );
   });
 
-  it('GET /posts', async () => {
+  it('Should get all posts filtered by score with a limit of 2 results', async () => {
     const response = await supertest(app).get('/posts?sortBy=score&limit=2');
 
     strictEqual(response.status, 200);
   });
 
-  it('GET /posts/:id', async () => {
+  it('Should get a post by id', async () => {
     const response = await supertest(app).get(`/posts/${post._id}`);
 
     strictEqual(response.status, 200);
   });
 
-  it('GET /users/:id/posts', async () => {
+  it('Should get all the posts from a user', async () => {
     const response = await supertest(app).get(`/users/${user._id}/posts`);
 
     strictEqual(response.status, 200);
   });
 
-  it('GET /users/me/posts', async () => {
+  it('Should get all posts from the logged in user', async () => {
     const response = await supertest(app)
       .get(`/users/me/posts`)
       .set('Cookie', user.cookie);
@@ -47,7 +47,7 @@ describe('Post endpoints', () => {
     strictEqual(response.status, 200);
   });
 
-  it('POST /users/me/posts', async () => {
+  it('Should create a new post in behalf of the logged in user', async () => {
     const response = await supertest(app)
       .post(`/users/me/posts`)
       .set('Cookie', user.cookie)

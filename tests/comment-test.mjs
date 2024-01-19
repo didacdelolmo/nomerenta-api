@@ -70,13 +70,13 @@ describe('Comment endpoints', () => {
     );
   });
 
-  it('GET /posts/:id/comments', async () => {
+  it('Should hierarchically get all comments from a post', async () => {
     const response = await supertest(app).get(`/posts/${post._id}/comments`);
 
     strictEqual(response.status, 200);
   });
 
-  it('POST /posts/:id/comments', async () => {
+  it('Should post a comment on behalf of a logged in user', async () => {
     const response = await supertest(app)
       .post(`/posts/${post._id}/comments`)
       .set('Cookie', user.cookie)

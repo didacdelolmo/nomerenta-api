@@ -14,7 +14,7 @@ describe('User endpoints', () => {
     user = await UserFixture.create('didacdelolmo', 'abcd1234');
   });
 
-  it('POST /register', async () => {
+  it('Should register a new user', async () => {
     const content = {
       username: 'diego',
       password: 'zxcv0987',
@@ -26,7 +26,18 @@ describe('User endpoints', () => {
     assert.strictEqual(response.body.username, content.username);
   });
 
-  it('POST /login', async () => {
+  it('Should NOT register a new user because the username is taken', async () => {
+    const content = {
+      username: 'Diego', // note how the D is uppercase
+      password: 'zxcv0987',
+    };
+
+    const response = await supertest(app).post('/register').send(content);
+
+    assert.strictEqual(response.status, 400);
+  });
+
+  it('Should login a user', async () => {
     const response = await supertest(app).post('/login').send({
       username: user.username,
       password: user.password,
@@ -36,10 +47,10 @@ describe('User endpoints', () => {
     assert.strictEqual(response.body.username, user.username);
   });
 
-  it('POST /users/me/avatar', async () => {
+  it('Should set for the first time a user avatar', async () => {
     const pathString = fileURLToPath(import.meta.url);
     const dirString = dirname(pathString);
-    const absolutePath = resolve(dirString, 'avatars/avatar.jpg');
+    const absolutePath = resolve(dirString, 'avatars/bed.png');
 
     const response = await supertest(app)
       .post('/users/me/avatar')
@@ -47,5 +58,31 @@ describe('User endpoints', () => {
       .attach('avatar', absolutePath);
 
     assert.strictEqual(response.status, 200);
+  });
+
+  it('Should update a user avatar', async () => {
+    const pathString = fileURLToPath(import.meta.url);
+    const dirString = dirname(pathString);
+    const absolutePath = resolve(dirString, 'avatars/doublebed.png');
+
+    const response = await supertest(app)
+      .post('/users/me/avatar')
+      .set('Cookie', user.cookie)
+      .attach('avatar', absolutePath);
+
+    assert.strictEqual(response.status, 200);
+  });
+
+  it('Should NOT update a user avatar because the image is too big', async () => {
+    const pathString = fileURLToPath(import.meta.url);
+    const dirString = dirname(pathString);
+    const absolutePath = resolve(dirString, 'avatars/30mb.jpg');
+
+    const response = await supertest(app)
+      .post('/users/me/avatar')
+      .set('Cookie', user.cookie)
+      .attach('avatar', absolutePath);
+
+    assert.strictEqual(response.status, 400);
   });
 });

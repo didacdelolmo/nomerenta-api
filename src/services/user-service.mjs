@@ -21,7 +21,7 @@ export async function existsId(userId) {
 }
 
 export async function existsUsername(username) {
-  return UserModel.exists({ username });
+  return UserModel.exists({ username: { $regex: new RegExp(username, 'i') } });
 }
 
 export async function create(username, hashedPassword) {

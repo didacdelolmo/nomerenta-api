@@ -3,7 +3,6 @@ import * as userService from './user-service.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
 
-/** Have to double check if username checks are case sensitive */
 export async function register({ username, password }) {
   const existsUser = await userService.existsUsername(username);
   if (existsUser) {
