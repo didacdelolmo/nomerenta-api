@@ -6,7 +6,7 @@ import {
 } from '../validation/post-validation.mjs';
 import { tryCatch } from '../utils/try-catch.mjs';
 import * as postController from '../controllers/post-controller.mjs';
-import { validateId } from '../validation/comment-validation.mjs';
+import { validateId } from '../validation/params-validation.mjs';
 
 const router = express.Router();
 

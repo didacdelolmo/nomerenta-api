@@ -1,5 +1,4 @@
 import { Schema, Types, model } from 'mongoose';
-import { getHierarchicalComments } from '../services/comment-service.mjs';
 
 const PostSchema = new Schema(
   {
@@ -34,10 +33,6 @@ const PostSchema = new Schema(
   { timestamps: true }
 );
 
-/**
- * This is NOT a hierarchical output
- * @see getHierarchicalComments
- */
 PostSchema.virtual('comments', {
   ref: 'Comment',
   localField: '_id',

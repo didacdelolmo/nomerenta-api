@@ -1,9 +1,11 @@
-import { celebrate, Joi } from "celebrate";
+import { celebrate, Joi } from 'celebrate';
 
-export const validateId = (req, res, next) => {
+export const validateCreateCommentInput = (req, res, next) => {
   celebrate({
-    params: {
-      id: Joi.string().required(),
+    body: {
+      postId: Joi.string().required(),
+      parentId: Joi.string(),
+      content: Joi.string().required(),
     },
   })(req, res, next);
 };

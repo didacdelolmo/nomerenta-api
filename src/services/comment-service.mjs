@@ -4,6 +4,10 @@ import * as postService from './post-service.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
 
+export async function getById(commentId) {
+  return CommentModel.findById(commentId);
+}
+
 export async function getByAuthor(authorId) {
   return CommentModel.find({ author: authorId });
 }
@@ -48,19 +52,34 @@ export async function create(authorId, { postId, parentId = null, content }) {
   return comment;
 }
 
-export function getHierarchicalComments(comments, parentId = null) {
+export async function getHierarchicalPostComments(postId) {
+  const post = await postService.getById(postId);
+  if (!post) {
+    throw new IdentifiedError(ErrorCode.INVALID_POST, 'Invalid post');
+  }
+
+  await post.populate('comments')
+  const comments = post.comments;
+
+  const commentMap = new Map();
   const hierarchicalComments = [];
 
   for (const comment of comments) {
-    if (
-      (!comment.parent && !parentId) ||
-      (comment.parent && comment.parent.toString() === parentId)
-    ) {
-      const childComments = getHierarchicalComments(comments, comment._id);
-      hierarchicalComments.push({
-        ...comment.toObject(),
-        children: childComments,
-      });
+    commentMap.set(comment._id.toString(), {
+      ...comment.toObject(),
+      replies: [],
+    });
+  }
+
+  for (const comment of comments) {
+    const parentComment = commentMap.get(
+      comment.parent && comment.parent.toString()
+    );
+
+    if (parentComment) {
+      parentComment.replies.push(commentMap.get(comment._id.toString()));
+    } else {
+      hierarchicalComments.push(commentMap.get(comment._id.toString()));
     }
   }
 

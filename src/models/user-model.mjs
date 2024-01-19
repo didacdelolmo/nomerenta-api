@@ -10,11 +10,13 @@ UserSchema.virtual('posts', {
   ref: 'Post',
   localField: '_id',
   foreignField: 'author',
+  justOne: false,
 });
 UserSchema.virtual('comments', {
   ref: 'Comment',
   localField: '_id',
   foreignField: 'author',
+  justOne: false,
 });
 
 UserSchema.methods.withoutHashedPassword = function () {

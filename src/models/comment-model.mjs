@@ -8,6 +8,7 @@ const CommentSchema = new Schema(
       type: Types.ObjectId,
       required: true,
       index: true,
+      autopopulate: true,
     },
     post: {
       ref: 'Post',
