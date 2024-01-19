@@ -60,7 +60,6 @@ export async function setAvatar(userId, avatar) {
   const resizeResult = await sharp(avatar.buffer)
     .resize(256, 256)
     .toFile(absolutePath);
-  // Must double-check if sharp can replace files
 
   if (resizeResult.size > 1 * 1024 * 1024) {
     throw new IdentifiedError(ErrorCode.IMAGE_TOO_BIG, 'Image is too big');
