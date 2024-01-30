@@ -1,5 +1,3 @@
-import CommentModel from '../models/comment-model.mjs';
-import PostModel from '../models/post-model.mjs';
 import * as commentService from '../services/comment-service.mjs';
 
 export async function comment(req, res) {
