@@ -10,6 +10,12 @@ import isAuthenticated from '../middleware/is-authenticated.mjs';
 
 const router = express.Router();
 
+router.get(
+  '/users/me',
+  isAuthenticated,
+  tryCatch(userController.getCurrentUser)
+);
+
 router.post('/register', validateAuthInput, tryCatch(userController.register));
 
 router.post('/login', validateAuthInput, tryCatch(userController.login));

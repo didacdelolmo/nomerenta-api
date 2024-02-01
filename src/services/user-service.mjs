@@ -6,8 +6,10 @@ import { fileURLToPath } from 'url';
 import { dirname, extname, resolve } from 'path';
 import sanitize from 'sanitize-filename';
 
-export async function getById(userId) {
-  return UserModel.findById(userId);
+export async function getById(userId, includeHashedPassword = false) {
+  return UserModel.findById(userId).select(
+    includeHashedPassword ? '+hashedPassword' : '-hashedPassword'
+  );
 }
 
 export async function getByUsername(username, includeHashedPassword = false) {

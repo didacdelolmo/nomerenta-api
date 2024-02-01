@@ -47,6 +47,14 @@ describe('User endpoints', () => {
     assert.strictEqual(response.body.username, user.username);
   });
 
+  it('Should retrieve a user data', async () => {
+    const response = await supertest(app)
+      .get('/users/me')
+      .set('Cookie', user.cookie);
+
+    assert.strictEqual(response.status, 200);
+  });
+
   it('Should set for the first time a user avatar', async () => {
     const pathString = fileURLToPath(import.meta.url);
     const dirString = dirname(pathString);
