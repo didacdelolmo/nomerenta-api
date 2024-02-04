@@ -12,6 +12,7 @@ const ErrorCode = {
   INVALID_REQUEST_INPUT: 10,
   INVALID_POST: 11,
   INVALID_COMMENT_PARENT: 12,
+  USERNAME_TOO_LONG: 13,
 };
 
 export default ErrorCode;

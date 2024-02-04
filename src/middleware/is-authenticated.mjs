@@ -3,7 +3,7 @@ import IdentifiedError from '../errors/identified-error.mjs';
 import { authenticated } from '../utils/auth.mjs';
 
 export const isAuthenticated = (req, res, next) => {
-  if (!authenticated) {
+  if (!authenticated(req)) {
     throw new IdentifiedError(ErrorCode.UNAUTHORIZED, 'Unauthorized');
   }
   next();

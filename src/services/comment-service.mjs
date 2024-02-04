@@ -12,6 +12,10 @@ export async function getByAuthor(authorId) {
   return CommentModel.find({ author: authorId });
 }
 
+export async function countByPost(postId) {
+  return CommentModel.countDocuments({ post: postId });
+}
+
 export async function existsId(commentId) {
   return CommentModel.exists({ _id: commentId });
 }
@@ -58,7 +62,7 @@ export async function getHierarchicalPostComments(postId) {
     throw new IdentifiedError(ErrorCode.INVALID_POST, 'Invalid post');
   }
 
-  await post.populate('comments')
+  await post.populate('comments');
   const comments = post.comments;
 
   const commentMap = new Map();

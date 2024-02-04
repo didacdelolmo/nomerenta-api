@@ -11,7 +11,7 @@ export const validateCreatePostInput = (req, res, next) => {
 
 export const validateGetAllPostsInput = (req, res, next) => {
   celebrate({
-    params: {
+    query: {
       sortBy: Joi.string(),
       start: Joi.number(),
       limit: Joi.number(),

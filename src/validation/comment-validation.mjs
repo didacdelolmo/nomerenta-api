@@ -4,8 +4,8 @@ export const validateCreateCommentInput = (req, res, next) => {
   celebrate({
     body: {
       postId: Joi.string().required(),
-      parentId: Joi.string(),
       content: Joi.string().required(),
+      parentId: Joi.string(),
     },
   })(req, res, next);
 };

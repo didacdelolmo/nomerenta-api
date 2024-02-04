@@ -1,7 +1,7 @@
 import * as postService from '../services/post-service.mjs';
 
 export async function getAllPosts(req, res) {
-  res.send(await postService.getAll(req.params));
+  res.send(await postService.getAll(req.query));
 }
 
 export async function getPost(req, res) {

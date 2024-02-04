@@ -20,11 +20,12 @@ const sessionHandler = session({
   //     password: REDIS_PASSWORD,
   //   }),
   // }),
-  // cookie: {
-  //   secure: false,
-  //   httpOnly: true,
-  //   maxAge: 24 * 60 * 60 * 1000
-  // }
+  cookie: {
+    secure: false,
+    httpOnly: false,
+    maxAge: 24 * 60 * 60 * 1000,
+    // sameSite: 'lax'
+  }
 });
 
 export { sessionHandler };

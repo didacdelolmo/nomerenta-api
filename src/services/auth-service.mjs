@@ -4,9 +4,16 @@ import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
 
 export async function register({ username, password }) {
+  if (username.length >= 16) {
+    throw new IdentifiedError(
+      ErrorCode.USERNAME_TOO_LONG,
+      'Nombre demasiado largo'
+    );
+  }
+
   const existsUser = await userService.existsUsername(username);
   if (existsUser) {
-    throw new IdentifiedError(ErrorCode.USERNAME_TAKEN, 'Username is taken');
+    throw new IdentifiedError(ErrorCode.USERNAME_TAKEN, 'Nombre ocupado');
   }
 
   const hashedPassword = await argon2.hash(password);
@@ -21,7 +28,7 @@ export async function login({ username, password }) {
   if (!user) {
     throw new IdentifiedError(
       ErrorCode.INVALID_CREDENTIALS,
-      'Invalid credentials'
+      'Credenciales invalidas'
     );
   }
 
@@ -29,7 +36,7 @@ export async function login({ username, password }) {
   if (!matchesPassword) {
     throw new IdentifiedError(
       ErrorCode.INVALID_CREDENTIALS,
-      'Invalid credentials'
+      'Credenciales invalidas'
     );
   }
 

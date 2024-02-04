@@ -29,7 +29,9 @@ export async function getAll({ sortBy = 'score', start = 0, limit = null }) {
     query = query.limit(limit);
   }
 
-  const posts = await query.exec();
+  const posts = await query.populate('author').exec();
+
+  console.log('posts are', posts)
 
   return posts;
 }
