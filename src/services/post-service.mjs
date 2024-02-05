@@ -30,9 +30,7 @@ export async function getAll({ sortBy = 'score', start = 0, limit = null }) {
   }
 
   const posts = await query.populate('author').exec();
-
-  console.log('posts are', posts)
-
+  
   return posts;
 }
 

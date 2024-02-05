@@ -35,6 +35,14 @@ const PostSchema = new Schema(
   { timestamps: true }
 );
 
+PostSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'post',
+  justOne: false,
+  options: { sort: { createdAt: 1 } },
+});
+
 PostSchema.pre('save', function (next) {
   this.score = this.upvotes.length - this.downvotes.length;
   this.commentCount = commentService.countByPost(this._id);

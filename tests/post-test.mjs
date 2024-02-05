@@ -7,17 +7,25 @@ import { strictEqual } from 'assert';
 
 describe('Post endpoints', () => {
   let user;
-  let post;
+
+  let post1;
+  let post2;
 
   before(async () => {
     await UserFixture.clean();
     await PostFixture.clean();
 
     user = await UserFixture.create('diego', 'hjkl6789');
-    post = await PostFixture.create(
+
+    post1 = await PostFixture.create(
       user._id,
       'la navidad',
       'la navidad es mala'
+    );
+    post2 = await PostFixture.create(
+      user._id,
+      'salir de casa',
+      'vivimos en una sociedad'
     );
   });
 
@@ -27,8 +35,18 @@ describe('Post endpoints', () => {
     strictEqual(response.status, 200);
   });
 
+  it('Should get all posts filtered by most recent with a limit of 1 result', async () => {
+    const response = await supertest(app).get(
+      '/posts?sortBy=createdAt&start=0&limit=1'
+    );
+
+    console.log('response is', response.body);
+
+    strictEqual(response.status, 200);
+  });
+
   it('Should get a post by id', async () => {
-    const response = await supertest(app).get(`/posts/${post._id}`);
+    const response = await supertest(app).get(`/posts/${post1._id}`);
 
     strictEqual(response.status, 200);
   });
