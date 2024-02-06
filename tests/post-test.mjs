@@ -76,4 +76,32 @@ describe('Post endpoints', () => {
 
     strictEqual(response.status, 200);
   });
+
+  it('Should upvote a post', async () => {
+    const response = await supertest(app)
+      .patch(`/posts/${post1._id}/upvote`)
+      .set('Cookie', user.cookie);
+
+    strictEqual(response.status, 200);
+  });
+
+  it('Should downvote a post', async () => {
+    const response = await supertest(app)
+      .patch(`/posts/${post1._id}/downvote`)
+      .set('Cookie', user.cookie);
+
+    strictEqual(response.status, 200);
+  });
+
+  it('Should upvote a post and then downvote it', async () => {
+    const firstResponse = await supertest(app)
+      .patch(`/posts/${post2._id}/upvote`)
+      .set('Cookie', user.cookie);
+    const secondResponse = await supertest(app)
+      .patch(`/posts/${post2._id}/downvote`)
+      .set('Cookie', user.cookie);
+
+    strictEqual(firstResponse.status, 200);
+    strictEqual(secondResponse.status, 200);
+  });
 });

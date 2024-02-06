@@ -24,9 +24,34 @@ const CommentSchema = new Schema(
       type: String,
       required: true,
     },
+    upvotes: {
+      type: [
+        {
+          ref: 'User',
+          type: Types.ObjectId,
+        },
+      ],
+      default: [],
+    },
+    downvotes: {
+      type: [
+        {
+          ref: 'User',
+          type: Types.ObjectId,
+        },
+      ],
+      default: [],
+    },
+    score: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
+
+CommentSchema.pre('save', function (next) {
+  this.score = this.upvotes.length - this.downvotes.length;
+
+  next();
+});
 
 CommentSchema.plugin(autopopulate);
 

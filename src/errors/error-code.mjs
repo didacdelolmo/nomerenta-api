@@ -14,6 +14,8 @@ const ErrorCode = {
   INVALID_COMMENT_PARENT: 12,
   USERNAME_TOO_LONG: 13,
   INVALID_IDENTIFIER: 14,
+  INVALID_RATE: 15,
+  INVALID_COMMENT: 16,
 };
 
 export default ErrorCode;

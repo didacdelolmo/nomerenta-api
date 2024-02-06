@@ -21,4 +21,25 @@ router.post(
   tryCatch(commentController.comment)
 );
 
+router.patch(
+  '/comments/:id/upvote',
+  isAuthenticated,
+  validateId,
+  tryCatch(commentController.upvote)
+);
+
+router.patch(
+  '/comments/:id/downvote',
+  isAuthenticated,
+  validateId,
+  tryCatch(commentController.downvote)
+);
+
+router.patch(
+  '/comments/:id/unvote',
+  isAuthenticated,
+  validateId,
+  tryCatch(commentController.unvote)
+);
+
 export default router;

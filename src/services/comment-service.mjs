@@ -3,6 +3,7 @@ import * as userService from './user-service.mjs';
 import * as postService from './post-service.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
+import { Types } from 'mongoose';
 
 export async function getById(commentId) {
   return CommentModel.findById(commentId);
@@ -88,4 +89,62 @@ export async function getHierarchicalPostComments(postId) {
   }
 
   return hierarchicalComments;
+}
+
+export async function upvote(postId, userId) {
+  return rate(postId, userId, 'positive');
+}
+
+export async function downvote(postId, userId) {
+  return rate(postId, userId, 'negative');
+}
+
+export async function unvote(postId, userId) {
+  return rate(postId, userId, 'undo');
+}
+
+/**
+ * * type can be either 'positive', 'negative' or 'undo'
+ */
+async function rate(postId, userId, type = 'positive') {
+  const post = await getById(postId);
+  if (!post) {
+    throw new IdentifiedError(ErrorCode.INVALID_POST, 'Publicación inválida');
+  }
+
+  const existsUser = await userService.existsId(userId);
+  if (!existsUser) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
+  }
+
+  const upvotesSet = new Set(post.upvotes.map((id) => id.toString()));
+  const downvotesSet = new Set(post.downvotes.map((id) => id.toString()));
+
+  switch (type) {
+    case 'positive':
+      if (downvotesSet.has(userId)) {
+        downvotesSet.delete(userId);
+      }
+      upvotesSet.add(userId);
+      break;
+    case 'negative':
+      if (upvotesSet.has(userId)) {
+        upvotesSet.delete(userId);
+      }
+      downvotesSet.add(userId);
+      break;
+    case 'undo':
+      upvotesSet.delete(userId);
+      downvotesSet.delete(userId);
+      break;
+    default:
+      throw new IdentifiedError(ErrorCode.INVALID_RATE, 'Rating inválido');
+  }
+
+  post.upvotes = Array.from(upvotesSet).map((id) => Types.ObjectId(id));
+  post.downvotes = Array.from(downvotesSet).map((id) => Types.ObjectId(id));
+
+  await post.save();
+
+  return post;
 }

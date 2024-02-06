@@ -38,4 +38,25 @@ router.post(
   tryCatch(postController.post)
 );
 
+router.patch(
+  '/posts/:id/upvote',
+  isAuthenticated,
+  validateId,
+  tryCatch(postController.upvote)
+);
+
+router.patch(
+  '/posts/:id/downvote',
+  isAuthenticated,
+  validateId,
+  tryCatch(postController.downvote)
+);
+
+router.patch(
+  '/posts/:id/unvote',
+  isAuthenticated,
+  validateId,
+  tryCatch(postController.unvote)
+);
+
 export default router;

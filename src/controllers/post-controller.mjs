@@ -19,3 +19,15 @@ export async function getCurrentUserPosts(req, res) {
 export async function post(req, res) {
   res.send(await postService.create(req.session.userId, req.body));
 }
+
+export async function upvote(req, res) {
+  res.send(await postService.upvote(req.params.id, req.session.userId));
+}
+
+export async function downvote(req, res) {
+  res.send(await postService.downvote(req.params.id, req.session.userId));
+}
+
+export async function unvote(req, res) {
+  res.send(await postService.unvote(req.params.id, req.session.userId));
+}
