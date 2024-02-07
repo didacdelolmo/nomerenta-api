@@ -2,6 +2,7 @@ import argon2 from 'argon2';
 import * as userService from './user-service.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
+import crypto from 'crypto';
 
 export async function register({ username, password }) {
   if (username.length >= 16) {
@@ -21,6 +22,14 @@ export async function register({ username, password }) {
   const user = await userService.create(username, hashedPassword);
 
   return user.withoutHashedPassword();
+}
+
+export async function registerAnonimously() {
+  const count = await userService.countAnonymous();
+  const username = `Anónimo ${count + 1}`;
+  const password = crypto.randomBytes(20).toString('base64');
+
+  return register({ username, password });
 }
 
 export async function login({ username, password }) {

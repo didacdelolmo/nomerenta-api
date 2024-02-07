@@ -12,6 +12,12 @@ export async function register(req, res) {
   res.send(user);
 }
 
+export async function registerAnonimously(req, res) {
+  const user = await authService.registerAnonimously();
+  authenticate(user, req);
+  res.send(user);
+}
+
 export async function login(req, res) {
   const user = await authService.login(req.body);
   authenticate(user, req);

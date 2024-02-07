@@ -26,6 +26,11 @@ export async function existsUsername(username) {
   return UserModel.exists({ username: { $regex: new RegExp(username, 'i') } });
 }
 
+export async function countAnonymous() {
+  return UserModel.countDocuments({ username: { $regex: /^Anónimo \d+$/ } });
+}
+
+
 export async function create(username, hashedPassword) {
   const user = await UserModel.create({
     username,

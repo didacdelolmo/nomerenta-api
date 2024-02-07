@@ -18,6 +18,11 @@ router.get(
 
 router.post('/register', validateAuthInput, tryCatch(userController.register));
 
+router.post(
+  '/registerAnonimously',
+  tryCatch(userController.registerAnonimously)
+);
+
 router.post('/login', validateAuthInput, tryCatch(userController.login));
 
 router.post(
