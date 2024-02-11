@@ -13,7 +13,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const allowedOrigins = ['http://127.0.0.1:5173', 'https://nomerenta.com'];
+const allowedOrigins = [
+  'http://127.0.0.1:5173',
+  'https://nomerenta.com',
+  'https://nomerenta-app.vercel.app',
+];
 
 app.use(
   cors({
