@@ -5,6 +5,7 @@ const UserSchema = new Schema(
     username: { type: String, required: true, unique: true, index: true },
     hashedPassword: { type: String, required: true, select: false },
     avatar: { type: String, default: null },
+    anonymous: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

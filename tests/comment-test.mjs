@@ -70,6 +70,14 @@ describe('Comment endpoints', () => {
     );
   });
 
+  it('Should retrieve all user comments', async () => {
+    const response = await supertest(app).get(`/users/${user._id}/comments`);
+
+    console.log('stfu', response.body);
+
+    strictEqual(response.status, 200);
+  });
+
   it('Should hierarchically get all comments from a post', async () => {
     const response = await supertest(app).get(`/posts/${post._id}/comments`);
 

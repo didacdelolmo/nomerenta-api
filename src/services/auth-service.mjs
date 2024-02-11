@@ -4,7 +4,7 @@ import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
 import crypto from 'crypto';
 
-export async function register({ username, password }) {
+export async function register({ username, password, anonymous }) {
   if (username.length >= 16) {
     throw new IdentifiedError(
       ErrorCode.USERNAME_TOO_LONG,
@@ -19,7 +19,7 @@ export async function register({ username, password }) {
 
   const hashedPassword = await argon2.hash(password);
 
-  const user = await userService.create(username, hashedPassword);
+  const user = await userService.create(username, hashedPassword, anonymous);
 
   return user.withoutHashedPassword();
 }
@@ -29,7 +29,7 @@ export async function registerAnonimously() {
   const username = `Anónimo ${count + 1}`;
   const password = crypto.randomBytes(20).toString('base64');
 
-  return register({ username, password });
+  return register({ username, password, anonymous: true });
 }
 
 export async function login({ username, password }) {

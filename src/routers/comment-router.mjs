@@ -8,6 +8,12 @@ import { tryCatch } from '../utils/try-catch.mjs';
 const router = express.Router();
 
 router.get(
+  '/users/:id/comments',
+  validateId,
+  tryCatch(commentController.getUserComments)
+);
+
+router.get(
   '/posts/:id/comments',
   validateId,
   tryCatch(commentController.getHierarchicalPostComments)

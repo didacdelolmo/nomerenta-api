@@ -4,6 +4,10 @@ export async function comment(req, res) {
   res.send(await commentService.create(req.session.userId, req.body));
 }
 
+export async function getUserComments(req, res) {
+  res.send(await commentService.getByAuthor(req.params.id));
+}
+
 export async function getHierarchicalPostComments(req, res) {
   res.send(await commentService.getHierarchicalPostComments(req.params.id));
 }

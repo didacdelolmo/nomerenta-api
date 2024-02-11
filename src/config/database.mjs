@@ -1,9 +1,6 @@
 import mongoose from 'mongoose';
 
-const {
-  MONGODB_TEST_URI,
-  MONGODB_URI = 'mongodb://localhost:27017/nomerenta-db',
-} = process.env;
+const { MONGODB_TEST_URI, MONGODB_URI } = process.env;
 
 mongoose
   .connect(MONGODB_TEST_URI ?? MONGODB_URI)

@@ -5,6 +5,7 @@ import UserModel from '../models/user-model.mjs';
 import { fileURLToPath } from 'url';
 import { dirname, extname, resolve } from 'path';
 import sanitize from 'sanitize-filename';
+import * as postService from './post-service.mjs'
 
 export async function getById(userId, includeHashedPassword = false) {
   return UserModel.findById(userId).select(
@@ -31,10 +32,11 @@ export async function countAnonymous() {
 }
 
 
-export async function create(username, hashedPassword) {
+export async function create(username, hashedPassword, anonymous) {
   const user = await UserModel.create({
     username,
     hashedPassword,
+    anonymous
   });
 
   console.log(

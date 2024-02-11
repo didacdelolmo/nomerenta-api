@@ -10,7 +10,7 @@ export async function getById(commentId) {
 }
 
 export async function getByAuthor(authorId) {
-  return CommentModel.find({ author: authorId });
+  return CommentModel.find({ author: authorId }).populate('author post');
 }
 
 export async function countByPost(postId) {
@@ -60,11 +60,11 @@ export async function create(authorId, { postId, parentId = null, content }) {
 export async function getHierarchicalPostComments(postId) {
   const post = await postService.getById(postId);
   if (!post) {
-    throw new IdentifiedError(ErrorCode.INVALID_POST, 'Invalid post');
+    throw new IdentifiedError(ErrorCode.INVALID_POST, 'Publicación inválida');
   }
 
   await post.populate('comments');
-  const comments = post.comments;
+  const comments = post.comments.reverse();
 
   const commentMap = new Map();
   const hierarchicalComments = [];
@@ -141,8 +141,8 @@ async function rate(postId, userId, type = 'positive') {
       throw new IdentifiedError(ErrorCode.INVALID_RATE, 'Rating inválido');
   }
 
-  post.upvotes = Array.from(upvotesSet).map((id) => Types.ObjectId(id));
-  post.downvotes = Array.from(downvotesSet).map((id) => Types.ObjectId(id));
+  post.upvotes = Array.from(upvotesSet).map((id) => new Types.ObjectId(id));
+  post.downvotes = Array.from(downvotesSet).map((id) => new Types.ObjectId(id));
 
   await post.save();
 

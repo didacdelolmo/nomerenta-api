@@ -9,7 +9,7 @@ export async function getById(postId) {
 }
 
 export async function getByAuthor(userId) {
-  return PostModel.find({ author: userId });
+  return PostModel.find({ author: userId }).populate('author');
 }
 
 export async function getAll({ sortBy = 'score', start = 0, limit = null }) {

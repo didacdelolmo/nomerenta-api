@@ -30,9 +30,10 @@ const PostSchema = new Schema(
       default: [],
     },
     score: { type: Number, default: 0 },
-    commentCount: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 PostSchema.virtual('comments', {
@@ -43,9 +44,13 @@ PostSchema.virtual('comments', {
   options: { sort: { createdAt: 1 } },
 });
 
+PostSchema.virtual('commentCount').get(async function () {
+  await this.populate('comments');
+  return this.comments?.length ?? 0;
+});
+
 PostSchema.pre('save', function (next) {
   this.score = this.upvotes.length - this.downvotes.length;
-  this.commentCount = commentService.countByPost(this._id);
 
   next();
 });
