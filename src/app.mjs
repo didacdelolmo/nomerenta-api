@@ -13,7 +13,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const allowedOrigins = ['http://127.0.0.1:5173', 'http://192.168.1.132:5173'];
+const allowedOrigins = ['http://127.0.0.1:5173', 'https://nomerenta.com'];
 
 app.use(
   cors({
