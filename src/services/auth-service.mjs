@@ -3,8 +3,14 @@ import * as userService from './user-service.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
 import crypto from 'crypto';
+import RoleIdentifier from '../roles/role-identifier.mjs';
 
-export async function register({ username, password, anonymous }) {
+export async function register({
+  username,
+  password,
+  roleId = RoleIdentifier.MEMBER,
+  anonymous = false,
+}) {
   if (username.length >= 16) {
     throw new IdentifiedError(
       ErrorCode.USERNAME_TOO_LONG,
@@ -19,7 +25,12 @@ export async function register({ username, password, anonymous }) {
 
   const hashedPassword = await argon2.hash(password);
 
-  const user = await userService.create(username, hashedPassword, anonymous);
+  const user = await userService.create(
+    username,
+    hashedPassword,
+    roleId,
+    anonymous
+  );
 
   return user.withoutHashedPassword();
 }
@@ -48,6 +59,8 @@ export async function login({ username, password }) {
       'Credenciales invalidas'
     );
   }
+
+  userService.tryToApplyPremium(user);
 
   return user.withoutHashedPassword();
 }

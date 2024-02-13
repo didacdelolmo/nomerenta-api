@@ -24,12 +24,12 @@ export async function existsId(commentId) {
 export async function create(authorId, { postId, parentId = null, content }) {
   const existsUser = await userService.existsId(authorId);
   if (!existsUser) {
-    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Invalid user');
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
   }
 
   const existsPost = await postService.existsId(postId);
   if (!existsPost) {
-    throw new IdentifiedError(ErrorCode.INVALID_POST, 'Invalid post');
+    throw new IdentifiedError(ErrorCode.INVALID_POST, 'Publicación inválida');
   }
 
   if (parentId) {
@@ -37,7 +37,7 @@ export async function create(authorId, { postId, parentId = null, content }) {
     if (!existsParent) {
       throw new IdentifiedError(
         ErrorCode.INVALID_COMMENT_PARENT,
-        'Invalid comment parent'
+        'Pariente de comentario inválido'
       );
     }
   }

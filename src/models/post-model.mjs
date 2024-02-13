@@ -30,6 +30,7 @@ const PostSchema = new Schema(
       default: [],
     },
     score: { type: Number, default: 0 },
+    commentsCount: { type: Number, default: 0 }
   },
   {
     timestamps: true,
@@ -42,11 +43,6 @@ PostSchema.virtual('comments', {
   foreignField: 'post',
   justOne: false,
   options: { sort: { createdAt: 1 } },
-});
-
-PostSchema.virtual('commentCount').get(async function () {
-  await this.populate('comments');
-  return this.comments?.length ?? 0;
 });
 
 PostSchema.pre('save', function (next) {

@@ -16,6 +16,8 @@ const ErrorCode = {
   INVALID_IDENTIFIER: 14,
   INVALID_RATE: 15,
   INVALID_COMMENT: 16,
+  INSUFFICIENT_PERMISSIONS: 17,
+  INVALID_ROLE: 18,
 };
 
 export default ErrorCode;

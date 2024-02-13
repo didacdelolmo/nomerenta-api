@@ -113,3 +113,17 @@ async function rate(postId, userId, type = 'positive') {
 
   return post;
 }
+
+export const incrementCommentsCount = async (postId) => {
+  await PostModel.updateOne(
+    { _id: postId },
+    { $inc: { commentsCount: 1 } }
+  ).exec();
+};
+
+export const decrementCommentsCount = async (postId) => {
+  await PostModel.updateOne(
+    { _id: postId },
+    { $inc: { commentsCount: -1 } }
+  ).exec();
+};

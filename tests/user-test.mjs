@@ -5,13 +5,18 @@ import assert from 'assert';
 import UserFixture from './fixtures/user-fixture.mjs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import RoleIdentifier from '../src/roles/role-identifier.mjs';
 
 describe('User endpoints', () => {
   let user;
 
   before(async () => {
     await UserFixture.clean();
-    user = await UserFixture.create('didacdelolmo', 'abcd1234');
+    user = await UserFixture.create(
+      'didacdelolmo',
+      'abcd1234',
+      RoleIdentifier.PREMIUM
+    );
   });
 
   it('Should register a new user', async () => {

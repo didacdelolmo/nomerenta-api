@@ -1,5 +1,6 @@
 import { Schema, Types, model } from 'mongoose';
 import autopopulate from 'mongoose-autopopulate';
+import * as postService from '../services/post-service.mjs';
 
 const CommentSchema = new Schema(
   {
@@ -51,6 +52,13 @@ CommentSchema.pre('save', function (next) {
   this.score = this.upvotes.length - this.downvotes.length;
 
   next();
+});
+
+CommentSchema.post('save', function () {
+  postService.incrementCommentsCount(this.post);
+});
+CommentSchema.post('remove', function () {
+  postService.decrementCommentsCount(this.post);
 });
 
 CommentSchema.plugin(autopopulate);

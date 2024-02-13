@@ -5,7 +5,10 @@ import UserModel from '../models/user-model.mjs';
 import { fileURLToPath } from 'url';
 import { dirname, extname, resolve } from 'path';
 import sanitize from 'sanitize-filename';
-import * as postService from './post-service.mjs'
+import RoleManager from '../roles/role-manager.mjs';
+import Premium from '../roles/premium.mjs';
+import axios from 'axios';
+import RoleIdentifier from '../roles/role-identifier.mjs';
 
 export async function getById(userId, includeHashedPassword = false) {
   return UserModel.findById(userId).select(
@@ -31,12 +34,12 @@ export async function countAnonymous() {
   return UserModel.countDocuments({ username: { $regex: /^Anónimo \d+$/ } });
 }
 
-
-export async function create(username, hashedPassword, anonymous) {
+export async function create(username, hashedPassword, roleId, anonymous) {
   const user = await UserModel.create({
     username,
     hashedPassword,
-    anonymous
+    roleId,
+    anonymous,
   });
 
   console.log(
@@ -47,10 +50,36 @@ export async function create(username, hashedPassword, anonymous) {
   return user;
 }
 
+export async function setRole(userId, roleId) {
+  const user = await getById(userId);
+  if (!user) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
+  }
+
+  const role = RoleManager.getRole(roleId);
+  if (role === null) {
+    throw new IdentifiedError(ErrorCode.INVALID_ROLE, 'Este rol no existe');
+  }
+
+  user.roleId = roleId;
+
+  await user.save();
+
+  return user;
+}
+
 export async function setAvatar(userId, avatar) {
   const user = await getById(userId);
   if (!user) {
-    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Invalid user');
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
+  }
+
+  const role = user.role;
+  if (!role.canChangeAvatar()) {
+    throw new IdentifiedError(
+      ErrorCode.INSUFFICIENT_PERMISSIONS,
+      'Cambia tu foto de perfil con PREMIUM'
+    );
   }
 
   const sanitizedAvatar = sanitize(avatar.originalname);
@@ -63,7 +92,10 @@ export async function setAvatar(userId, avatar) {
   const absolutePath = resolve(dirString, `../../assets/avatars/${fileName}`);
 
   if (avatar.size > 1 * (1024 * 1024)) {
-    throw new IdentifiedError(ErrorCode.IMAGE_TOO_BIG, 'Image is too big');
+    throw new IdentifiedError(
+      ErrorCode.IMAGE_TOO_BIG,
+      'La imagen es demasiado grande'
+    );
   }
 
   const resizeResult = await sharp(avatar.buffer)
@@ -71,7 +103,10 @@ export async function setAvatar(userId, avatar) {
     .toFile(absolutePath);
 
   if (resizeResult.size > 1 * 1024 * 1024) {
-    throw new IdentifiedError(ErrorCode.IMAGE_TOO_BIG, 'Image is too big');
+    throw new IdentifiedError(
+      ErrorCode.IMAGE_TOO_BIG,
+      'La imagen es demasiado grande'
+    );
   }
 
   user.avatar = fileName;
@@ -83,4 +118,43 @@ export async function setAvatar(userId, avatar) {
   );
 
   return user;
+}
+
+/**
+ * * Calls gumroad API to know if there was a sale with the user id username
+ */
+export async function tryToApplyPremium(user) {
+  const role = user.role;
+  if (role instanceof Premium) {
+    return false;
+  }
+
+  const { GUMROAD_ACCESS_TOKEN } = process.env;
+  const response = await axios.get('https://api.gumroad.com/v2/sales', {
+    headers: { Authorization: `Bearer ${GUMROAD_ACCESS_TOKEN}` },
+  });
+
+  if (!response.data) {
+    return false;
+    // Might consider throwing an error instead?
+  }
+  const sales = response.data.sales;
+
+  console.log('the sales are', sales);
+
+  if (
+    sales.some(
+      (sale) => sale.custom_fields['Nombre de usuario'] === user.username
+    )
+  ) {
+    user.roleId = RoleIdentifier.PREMIUM;
+
+    await user.save();
+
+    console.log(`🏆 [user-service]: ${user.username} has purchased PREMIUM!`);
+
+    return true;
+  }
+
+  return false;
 }

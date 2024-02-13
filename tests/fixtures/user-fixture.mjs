@@ -3,20 +3,30 @@ import * as userService from '../../src/services/user-service.mjs';
 import * as authService from '../../src/services/auth-service.mjs';
 import supertest from 'supertest';
 import app from '../../src/app.mjs';
+import RoleIdentifier from '../../src/roles/role-identifier.mjs';
 
 class UserFixture {
   _id;
   cookie;
   username;
   password;
+  roleId;
+  anonymous;
 
-  constructor(username, password) {
+  constructor(username, password, roleId, anonymous) {
     this.username = username;
     this.password = password;
+    this.roleId = roleId;
+    this.anonymous = anonymous;
   }
 
-  static async create(username, password) {
-    const user = new this(username, password);
+  static async create(
+    username,
+    password,
+    roleId = RoleIdentifier.MEMBER,
+    anonymous = false
+  ) {
+    const user = new this(username, password, roleId, anonymous);
     await user.authenticate();
     return user;
   }
@@ -38,6 +48,8 @@ class UserFixture {
     await authService.register({
       username: this.username,
       password: this.password,
+      roleId: this.roleId,
+      anonymous: this.anonymous,
     });
   }
 
