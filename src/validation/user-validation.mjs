@@ -14,7 +14,7 @@ export const validateAuthInput = (req, res, next) => {
 /** Must be used AFTER avatar multer upload middleware */
 export const validateAvatarInput = (req, res, next) => {
   if (!req.file) {
-    throw new IdentifiedError(ErrorCode.IMAGE_REQUIRED, 'An image is required');
+    throw new IdentifiedError(ErrorCode.IMAGE_REQUIRED, 'Es necesario subir una imágen');
   }
   next();
 };

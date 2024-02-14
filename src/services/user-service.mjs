@@ -126,7 +126,7 @@ export async function setAvatar(userId, avatar) {
 export async function tryToApplyPremium(user) {
   const role = user.role;
   if (role instanceof Premium) {
-    return false;
+    return;
   }
 
   const { GUMROAD_ACCESS_TOKEN } = process.env;
@@ -135,12 +135,10 @@ export async function tryToApplyPremium(user) {
   });
 
   if (!response.data) {
-    return false;
+    return;
     // Might consider throwing an error instead?
   }
   const sales = response.data.sales;
-
-  console.log('the sales are', sales);
 
   if (
     sales.some(
@@ -152,9 +150,5 @@ export async function tryToApplyPremium(user) {
     await user.save();
 
     console.log(`🏆 [user-service]: ${user.username} has purchased PREMIUM!`);
-
-    return true;
   }
-
-  return false;
 }

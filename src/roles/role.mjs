@@ -5,7 +5,7 @@ class Role {
   canChangeAvatar() {
     throw new IdentifiedError(
       ErrorCode.INVALID_ROLE_PERMISSION,
-      'Invalid role permission'
+      'Permisos de rol inválidos'
     );
   }
 }

@@ -4,7 +4,7 @@ import { authenticated } from '../utils/auth.mjs';
 
 export const isAuthenticated = (req, res, next) => {
   if (!authenticated(req)) {
-    return next(new IdentifiedError(ErrorCode.UNAUTHORIZED, 'Unauthorized'));
+    return next(new IdentifiedError(ErrorCode.UNAUTHORIZED, 'No autorizado'));
   }
   next();
 };
