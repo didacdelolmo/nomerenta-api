@@ -31,3 +31,7 @@ export async function downvote(req, res) {
 export async function unvote(req, res) {
   res.send(await postService.unvote(req.params.id, req.session.userId));
 }
+
+export async function feature(req, res) {
+  res.send(await postService.feature(req.session.userId, req.params.id));
+}

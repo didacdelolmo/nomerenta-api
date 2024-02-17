@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 import RoleIdentifier from '../roles/role-identifier.mjs';
 import RoleManager from '../roles/role-manager.mjs';
 
@@ -8,7 +8,41 @@ const UserSchema = new Schema(
     hashedPassword: { type: String, required: true, select: false },
     avatar: { type: String, default: null },
     roleId: { type: String, default: RoleIdentifier.MEMBER },
+    biography: { type: String, default: null },
+    flair: { type: String, default: null },
     anonymous: { type: Boolean, default: false },
+    actions: {
+      biography: {
+        type: [
+          {
+            _id: false,
+            date: { type: Date, required: true },
+            target: { type: Types.ObjectId, ref: 'User', required: true },
+          },
+        ],
+        default: [],
+      },
+      flair: {
+        type: [
+          {
+            _id: false,
+            date: { type: Date, required: true },
+            target: { type: Types.ObjectId, ref: 'User', required: true },
+          },
+        ],
+        default: [],
+      },
+      featured: {
+        type: [
+          {
+            _id: false,
+            date: { type: Date, required: true },
+            post: { type: Types.ObjectId, ref: 'Post', required: true },
+          },
+        ],
+        default: [],
+      },
+    },
   },
   { timestamps: true }
 );

@@ -16,7 +16,7 @@ const errorHandler = (err, req, res, next) => {
   } else if (err instanceof MulterError) {
     respond(400, ErrorCode.INVALID_AVATAR);
   } else if (err instanceof mongoose.Error.CastError) {
-    respond(400, ErrorCode.INVALID_IDENTIFIER, 'Invalid identifier');
+    respond(400, ErrorCode.INVALID_IDENTIFIER, 'Identificador inválido');
   } else if (err instanceof IdentifiedError) {
     respond(err.statusCode, err.errorCode);
   } else {

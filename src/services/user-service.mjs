@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, extname, resolve } from 'path';
 import sanitize from 'sanitize-filename';
 import RoleManager from '../roles/role-manager.mjs';
-import Premium from '../roles/premium.mjs';
+import Premium from '../roles/presets/premium.mjs';
 import axios from 'axios';
 import RoleIdentifier from '../roles/role-identifier.mjs';
 
@@ -75,7 +75,7 @@ export async function setAvatar(userId, avatar) {
   }
 
   const role = user.role;
-  if (!role.canChangeAvatar()) {
+  if (!role.canSetAvatar) {
     throw new IdentifiedError(
       ErrorCode.INSUFFICIENT_PERMISSIONS,
       'Cambia tu foto de perfil con PREMIUM'
@@ -151,4 +151,104 @@ export async function tryToApplyPremium(user) {
 
     console.log(`🏆 [user-service]: ${user.username} has purchased PREMIUM!`);
   }
+}
+
+export async function setOutsiderBiography(adminId, targetId, content) {
+  const admin = await getById(adminId);
+  const target = await getById(targetId);
+
+  if (!admin || !target) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
+  }
+
+  const role = admin.role;
+  if (!role.canSetOutsiderBiography) {
+    throw new IdentifiedError(
+      ErrorCode.INSUFFICIENT_PERMISSIONS,
+      'No tienes permisos para realizar esta acción'
+    );
+  }
+
+  if (!canPerformAdminAction(admin, 'biography')) {
+    throw new IdentifiedError(
+      ErrorCode.REACHED_ACTION_LIMIT,
+      'Has llegado al limite de veces que puedes realizar esta acción diariamente'
+    );
+  }
+
+  target.biography = content;
+  admin.actions.biography.push({ date: new Date(), target: target._id });
+
+  await target.save();
+  await admin.save();
+
+  console.log(
+    `📷 [user-service]: Administrator ${admin.username} updated the biography for user ${target.username}`,
+    target
+  );
+
+  return target;
+}
+
+export async function setOutsiderFlair(adminId, targetId, content) {
+  const admin = await getById(adminId);
+  const target = await getById(targetId);
+
+  if (!admin || !target) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
+  }
+
+  const role = admin.role;
+  if (!role.canSetOutsiderFlair) {
+    throw new IdentifiedError(
+      ErrorCode.INSUFFICIENT_PERMISSIONS,
+      'No tienes permisos para realizar esta acción'
+    );
+  }
+
+  if (!canPerformAdminAction(admin, 'flair')) {
+    throw new IdentifiedError(
+      ErrorCode.REACHED_ACTION_LIMIT,
+      'Has llegado al limite de veces que puedes realizar esta acción diariamente'
+    );
+  }
+
+  target.flair = content;
+  admin.actions.flair.push({ date: new Date(), target: target._id });
+
+  await target.save();
+  await admin.save();
+
+  console.log(
+    `📷 [user-service]: Administrator ${admin.username} updated the biography for user ${target.username}`,
+    target
+  );
+
+  return target;
+}
+
+export function canPerformAdminAction(user, action) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const limits = {
+    biography: 2,
+    flair: 2,
+    featured: 1,
+  };
+
+  if (!(action in limits)) {
+    throw new IdentifiedError(
+      ErrorCode.INVALID_ADMIN_ACTION,
+      'Esta acción de administrador no existe'
+    );
+  }
+
+  const actionCounts =
+    user.actions[action]?.filter((actionItem) => {
+      const actionDate = new Date(actionItem.date);
+      return actionDate >= today;
+    }).length || 0;
+
+  return actionCounts < limits[action];
 }

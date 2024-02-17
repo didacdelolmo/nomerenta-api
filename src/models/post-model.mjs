@@ -30,7 +30,8 @@ const PostSchema = new Schema(
       default: [],
     },
     score: { type: Number, default: 0 },
-    commentsCount: { type: Number, default: 0 }
+    commentsCount: { type: Number, default: 0 },
+    featuredUntil: { type: Date, default: null },
   },
   {
     timestamps: true,

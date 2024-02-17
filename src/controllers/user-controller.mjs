@@ -31,3 +31,23 @@ export async function getUser(req, res) {
 export async function updateAvatar(req, res) {
   res.send(await userService.setAvatar(req.session.userId, req.file));
 }
+
+export async function setOutsiderBiography(req, res) {
+  res.send(
+    await userService.setOutsiderBiography(
+      req.session.userId,
+      req.params.id,
+      req.body.biography
+    )
+  );
+}
+
+export async function setOutsiderFlair(req, res) {
+  res.send(
+    await userService.setOutsiderFlair(
+      req.session.userId,
+      req.params.id,
+      req.body.flair
+    )
+  );
+}

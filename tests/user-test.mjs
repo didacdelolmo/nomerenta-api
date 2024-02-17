@@ -10,12 +10,23 @@ import RoleIdentifier from '../src/roles/role-identifier.mjs';
 describe('User endpoints', () => {
   let user;
 
+  let admin;
+  let target;
+
   before(async () => {
     await UserFixture.clean();
+
     user = await UserFixture.create(
       'didacdelolmo',
       'abcd1234',
       RoleIdentifier.PREMIUM
+    );
+
+    admin = await UserFixture.create('admin', 'admin', RoleIdentifier.ADMIN);
+    target = await UserFixture.create(
+      'target',
+      'target',
+      RoleIdentifier.MEMBER
     );
   });
 
@@ -66,7 +77,7 @@ describe('User endpoints', () => {
     const absolutePath = resolve(dirString, 'avatars/bed.png');
 
     const response = await supertest(app)
-      .post('/users/me/avatar')
+      .patch('/users/me/avatar')
       .set('Cookie', user.cookie)
       .attach('avatar', absolutePath);
 
@@ -79,7 +90,7 @@ describe('User endpoints', () => {
     const absolutePath = resolve(dirString, 'avatars/doublebed.png');
 
     const response = await supertest(app)
-      .post('/users/me/avatar')
+      .patch('/users/me/avatar')
       .set('Cookie', user.cookie)
       .attach('avatar', absolutePath);
 
@@ -92,10 +103,45 @@ describe('User endpoints', () => {
     const absolutePath = resolve(dirString, 'avatars/30mb.jpg');
 
     const response = await supertest(app)
-      .post('/users/me/avatar')
+      .patch('/users/me/avatar')
       .set('Cookie', user.cookie)
       .attach('avatar', absolutePath);
 
+    assert.strictEqual(response.status, 400);
+  });
+
+  it(`Should allow an administrator to set someone else's biography`, async () => {
+    const response = await supertest(app)
+      .patch(`/users/${target._id}/biography`)
+      .set('Cookie', admin.cookie)
+      .send({ biography: 'I am cool' });
+
+    assert.strictEqual(response.status, 200);
+  });
+
+  it(`Should NOT allow an administrator to set someone else's biography for the third time`, async () => {
+    const person = await UserFixture.create(
+      'person',
+      'person',
+      RoleIdentifier.ADMIN
+    );
+
+    let response = await supertest(app)
+      .patch(`/users/${target._id}/biography`)
+      .set('Cookie', person.cookie)
+      .send({ biography: 'I am cool' });
+    assert.strictEqual(response.status, 200);
+
+    response = await supertest(app)
+      .patch(`/users/${target._id}/biography`)
+      .set('Cookie', person.cookie)
+      .send({ biography: 'I am cooler' });
+    assert.strictEqual(response.status, 200);
+
+    response = await supertest(app)
+      .patch(`/users/${target._id}/biography`)
+      .set('Cookie', person.cookie)
+      .send({ biography: 'I am coolest' });
     assert.strictEqual(response.status, 400);
   });
 });

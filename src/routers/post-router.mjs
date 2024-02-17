@@ -2,17 +2,20 @@ import express from 'express';
 import isAuthenticated from '../middleware/is-authenticated.mjs';
 import {
   validateCreatePostInput,
+  validateFeaturePostInput,
   validateGetAllPostsInput,
 } from '../validation/post-validation.mjs';
 import { tryCatch } from '../utils/try-catch.mjs';
 import * as postController from '../controllers/post-controller.mjs';
 import { validateId } from '../validation/params-validation.mjs';
+import { updateFeaturedPosts } from '../middleware/update-featured-posts.mjs';
 
 const router = express.Router();
 
 router.get(
   '/posts',
   validateGetAllPostsInput,
+  // updateFeaturedPosts,
   tryCatch(postController.getAllPosts)
 );
 
@@ -57,6 +60,13 @@ router.patch(
   isAuthenticated,
   validateId,
   tryCatch(postController.unvote)
+);
+
+router.patch(
+  '/posts/:id/feature',
+  isAuthenticated,
+  validateId,
+  tryCatch(postController.feature)
 );
 
 export default router;

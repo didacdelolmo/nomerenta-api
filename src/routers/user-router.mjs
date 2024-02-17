@@ -2,6 +2,8 @@ import express from 'express';
 import {
   validateAuthInput,
   validateAvatarInput,
+  validateSetOutsiderBiographyInput,
+  validateSetOutsiderFlairInput,
 } from '../validation/user-validation.mjs';
 import { tryCatch } from '../utils/try-catch.mjs';
 import * as userController from '../controllers/user-controller.mjs';
@@ -28,14 +30,29 @@ router.get(
 
 router.get('/users/:id', validateId, tryCatch(userController.getUser));
 
-router.get('')
-
-router.post(
+// Change to patch
+router.patch(
   '/users/me/avatar',
   isAuthenticated,
   uploadAvatar,
   validateAvatarInput,
   tryCatch(userController.updateAvatar)
+);
+
+router.patch(
+  '/users/:id/biography',
+  isAuthenticated,
+  validateId,
+  validateSetOutsiderBiographyInput,
+  tryCatch(userController.setOutsiderBiography)
+);
+
+router.patch(
+  '/users/:id/flair',
+  isAuthenticated,
+  validateId,
+  validateSetOutsiderFlairInput,
+  tryCatch(userController.setOutsiderFlair)
 );
 
 export default router;
