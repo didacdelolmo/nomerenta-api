@@ -3,13 +3,19 @@ import ErrorCode from '../errors/error-code.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import UserModel from '../models/user-model.mjs';
 import { fileURLToPath } from 'url';
+import 'dotenv/config';
 import { dirname, extname, resolve } from 'path';
 import sanitize from 'sanitize-filename';
 import RoleManager from '../roles/role-manager.mjs';
 import Premium from '../roles/presets/premium.mjs';
-import axios from 'axios';
 import RoleIdentifier from '../roles/role-identifier.mjs';
 import * as notificationService from './notification-service.mjs';
+import Admin from '../roles/presets/admin.mjs';
+import Boss from '../roles/presets/boss.mjs';
+import Stripe from 'stripe';
+
+const { STRIPE_API_KEY } = process.env;
+const stripe = new Stripe(STRIPE_API_KEY);
 
 export async function getById(userId, includeHashedPassword = false) {
   return UserModel.findById(userId).select(
@@ -130,43 +136,6 @@ export async function setAvatar(userId, avatar) {
   return user;
 }
 
-/**
- * * Calls gumroad API to know if there was a sale with the user id username
- */
-export async function tryToApplyPremium(user) {
-  const role = user.role;
-  if (role instanceof Premium) {
-    return;
-  }
-
-  const { GUMROAD_ACCESS_TOKEN } = process.env;
-  const response = await axios.get('https://api.gumroad.com/v2/sales', {
-    headers: { Authorization: `Bearer ${GUMROAD_ACCESS_TOKEN}` },
-  });
-
-  if (!response.data) {
-    return;
-    // Might consider throwing an error instead?
-  }
-  const sales = response.data.sales;
-
-  if (
-    sales.some(
-      (sale) => sale.custom_fields['Nombre de usuario'] === user.username
-    )
-  ) {
-    user.roleId = RoleIdentifier.PREMIUM;
-
-    await user.save();
-    await notificationService.create({
-      targetId: user_id,
-      message: '¡Gracias por comprar PREMIUM! 🏆',
-    });
-
-    console.log(`🏆 [user-service]: ${user.username} has purchased PREMIUM!`);
-  }
-}
-
 export async function setOutsiderBiography(adminId, targetId, content) {
   const admin = await UserModel.findById(adminId).select('+actions');
   const target = await getById(targetId);
@@ -265,4 +234,43 @@ export function canPerformAdminAction(user, action) {
     }).length || 0;
 
   return actionCounts < limits[action];
+}
+
+export async function tryToApplyPremium(user) {
+  const role = user.role;
+  if (
+    role instanceof Premium ||
+    role instanceof Admin ||
+    role instanceof Boss
+  ) {
+    return;
+  }
+
+  const events = await stripe.events.list({
+    type: 'checkout.session.completed',
+  });
+
+  if (
+    events.data.some((event) => {
+      const custom_fields = event.data.object.custom_fields;
+      if (custom_fields) {
+        return custom_fields.some((field) => {
+          return (
+            field.key === 'nombredeusuariodenomerentacom' &&
+            field.text.value === user.username
+          );
+        });
+      }
+    })
+  ) {
+    user.roleId = RoleIdentifier.PREMIUM;
+
+    await user.save();
+    await notificationService.create({
+      targetId: user._id,
+      message: '¡Gracias por comprar PREMIUM! 🏆',
+    });
+
+    console.log(`🏆 [user-service]: ${user.username} has purchased PREMIUM!`);
+  }
 }

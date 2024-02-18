@@ -19,7 +19,11 @@ initializeCounter().catch((error) => {
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
