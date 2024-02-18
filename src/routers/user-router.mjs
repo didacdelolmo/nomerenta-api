@@ -2,6 +2,7 @@ import express from 'express';
 import {
   validateAuthInput,
   validateAvatarInput,
+  validateGetUsersInput,
   validateSetOutsiderBiographyInput,
   validateSetOutsiderFlairInput,
 } from '../validation/user-validation.mjs';
@@ -23,6 +24,12 @@ router.post(
 router.post('/login', validateAuthInput, tryCatch(userController.login));
 
 router.get(
+  '/users',
+  validateGetUsersInput,
+  tryCatch(userController.getAllUsers)
+);
+
+router.get(
   '/users/me',
   isAuthenticated,
   tryCatch(userController.getCurrentUser)
@@ -30,7 +37,6 @@ router.get(
 
 router.get('/users/:id', validateId, tryCatch(userController.getUser));
 
-// Change to patch
 router.patch(
   '/users/me/avatar',
   isAuthenticated,

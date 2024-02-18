@@ -23,6 +23,15 @@ export async function getByUsername(username, includeHashedPassword = false) {
   );
 }
 
+export async function getAll(username, start = 0) {
+  const limit = 20;
+  const page = parseInt(start, 10) || 0;
+  const skip = page * limit;
+  const regex = new RegExp(username, 'i');
+
+  return UserModel.find({ username: regex }).limit(limit).skip(skip);
+}
+
 export async function existsId(userId) {
   return UserModel.exists({ _id: userId });
 }

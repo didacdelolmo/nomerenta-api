@@ -6,6 +6,8 @@ import UserFixture from './fixtures/user-fixture.mjs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import RoleIdentifier from '../src/roles/role-identifier.mjs';
+import PostFixture from './fixtures/post-fixture.mjs';
+import CommentFixture from './fixtures/comment-fixture.mjs';
 
 describe('User endpoints', () => {
   let user;
@@ -15,6 +17,8 @@ describe('User endpoints', () => {
 
   before(async () => {
     await UserFixture.clean();
+    await PostFixture.clean();
+    await CommentFixture.clean();
 
     user = await UserFixture.create(
       'didacdelolmo',
@@ -61,6 +65,14 @@ describe('User endpoints', () => {
 
     assert.strictEqual(response.status, 200);
     assert.strictEqual(response.body.username, user.username);
+  });
+
+  it('Should get all users whose username contain "didac"', async () => {
+    const response = await supertest(app)
+      .get('/users')
+      .send({ username: 'didac' });
+
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should retrieve a user data', async () => {

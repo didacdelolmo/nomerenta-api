@@ -20,6 +20,10 @@ export async function login(req, res) {
   res.send(user);
 }
 
+export async function getAllUsers(req, res) {
+  res.send(await userService.getAll(req.body.username, req.body.start));
+}
+
 export async function getCurrentUser(req, res) {
   res.send(await userService.getById(req.session.userId));
 }

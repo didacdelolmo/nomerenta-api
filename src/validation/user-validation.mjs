@@ -11,7 +11,18 @@ export const validateAuthInput = (req, res, next) => {
   })(req, res, next);
 };
 
-/** Must be used AFTER avatar multer upload middleware */
+export const validateGetUsersInput = (req, res, next) => {
+  celebrate({
+    body: {
+      username: Joi.string().required(),
+      start: Joi.number(),
+    },
+  })(req, res, next);
+};
+
+/**
+ * ! Must be used AFTER avatar multer upload middleware
+ */
 export const validateAvatarInput = (req, res, next) => {
   if (!req.file) {
     throw new IdentifiedError(

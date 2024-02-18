@@ -74,7 +74,7 @@ export async function create({
 }
 
 export async function markEverythingAsSeen(targetId) {
-  return NotificationModel.updateMany(
+  NotificationModel.updateMany(
     { target: targetId, seen: false },
     { $set: { seen: true } }
   );
