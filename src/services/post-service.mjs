@@ -3,6 +3,7 @@ import ErrorCode from '../errors/error-code.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import PostModel from '../models/post-model.mjs';
 import * as userService from './user-service.mjs';
+import UserModel from '../models/user-model.mjs';
 
 export async function getById(postId) {
   return PostModel.findById(postId).populate('author');
@@ -10,6 +11,10 @@ export async function getById(postId) {
 
 export async function getByAuthor(userId) {
   return PostModel.find({ author: userId }).populate('author');
+}
+
+export async function getFeatured() {
+  return PostModel.find({ featuredUntil: { $ne: null } });
 }
 
 export async function getAll({ sortBy = 'score', start = 0, limit = null }) {
@@ -129,7 +134,7 @@ export async function decrementCommentsCount(postId) {
 }
 
 export async function feature(adminId, postId) {
-  const admin = await userService.getById(adminId);
+  const admin = await UserModel.findById(adminId).select('+actions');
   if (!admin) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
   }
@@ -160,13 +165,13 @@ export async function feature(adminId, postId) {
   post.featuredUntil = date;
   admin.actions.featured.push({ date: new Date(), post: post._id });
 
-  await target.save();
   await admin.save();
+  await post.save();
 
   console.log(
-    `📷 [user-service]: Administrator ${admin.username} featured the post with id ${post._id}`,
+    `🌿 [post-service]: Administrator ${admin.username} featured the post with id ${post._id}`,
     post
   );
 
-  return target;
+  return post;
 }

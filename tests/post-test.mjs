@@ -3,10 +3,12 @@ import UserFixture from './fixtures/user-fixture.mjs';
 import PostFixture from './fixtures/post-fixture.mjs';
 import supertest from 'supertest';
 import app from '../src/app.mjs';
-import { strictEqual } from 'assert';
+import assert from 'assert';
+import RoleIdentifier from '../src/roles/role-identifier.mjs';
 
 describe('Post endpoints', () => {
   let user;
+  let admin;
 
   let post1;
   let post2;
@@ -16,6 +18,7 @@ describe('Post endpoints', () => {
     await PostFixture.clean();
 
     user = await UserFixture.create('diego', 'hjkl6789');
+    admin = await UserFixture.create('admin', 'admin', RoleIdentifier.ADMIN);
 
     post1 = await PostFixture.create(
       user._id,
@@ -32,7 +35,7 @@ describe('Post endpoints', () => {
   it('Should get all posts filtered by score with a limit of 2 results', async () => {
     const response = await supertest(app).get('/posts?sortBy=score&limit=2');
 
-    strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should get all posts filtered by most recent with a limit of 1 result', async () => {
@@ -42,19 +45,19 @@ describe('Post endpoints', () => {
 
     console.log('response is', response.body);
 
-    strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should get a post by id', async () => {
     const response = await supertest(app).get(`/posts/${post1._id}`);
 
-    strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should get all the posts from a user', async () => {
     const response = await supertest(app).get(`/users/${user._id}/posts`);
 
-    strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should get all posts from the logged in user', async () => {
@@ -62,7 +65,7 @@ describe('Post endpoints', () => {
       .get(`/users/me/posts`)
       .set('Cookie', user.cookie);
 
-    strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should create a new post in behalf of the logged in user', async () => {
@@ -74,7 +77,7 @@ describe('Post endpoints', () => {
         content: 'el verano es malo',
       });
 
-    strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should upvote a post', async () => {
@@ -82,7 +85,7 @@ describe('Post endpoints', () => {
       .patch(`/posts/${post1._id}/upvote`)
       .set('Cookie', user.cookie);
 
-    strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should downvote a post', async () => {
@@ -90,7 +93,7 @@ describe('Post endpoints', () => {
       .patch(`/posts/${post1._id}/downvote`)
       .set('Cookie', user.cookie);
 
-    strictEqual(response.status, 200);
+    assert.strictEqual(response.status, 200);
   });
 
   it('Should upvote a post and then downvote it', async () => {
@@ -101,7 +104,15 @@ describe('Post endpoints', () => {
       .patch(`/posts/${post2._id}/downvote`)
       .set('Cookie', user.cookie);
 
-    strictEqual(firstResponse.status, 200);
-    strictEqual(secondResponse.status, 200);
+    assert.strictEqual(firstResponse.status, 200);
+    assert.strictEqual(secondResponse.status, 200);
+  });
+
+  it(`Should allow an administrator to set a post as featured`, async () => {
+    const response = await supertest(app)
+      .patch(`/posts/${post1._id}/feature`)
+      .set('Cookie', admin.cookie);
+
+    assert.strictEqual(response.status, 200);
   });
 });

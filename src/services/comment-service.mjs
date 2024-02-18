@@ -4,6 +4,7 @@ import * as postService from './post-service.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
 import { Types } from 'mongoose';
+import * as notificationService from './notification-service.mjs';
 
 export async function getById(commentId) {
   return CommentModel.findById(commentId);
@@ -22,19 +23,20 @@ export async function existsId(commentId) {
 }
 
 export async function create(authorId, { postId, parentId = null, content }) {
-  const existsUser = await userService.existsId(authorId);
-  if (!existsUser) {
-    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
+  const author = await userService.getById(authorId);
+  if (!author) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Autor inválido');
   }
 
-  const existsPost = await postService.existsId(postId);
-  if (!existsPost) {
+  const post = await postService.getById(postId);
+  if (!post) {
     throw new IdentifiedError(ErrorCode.INVALID_POST, 'Publicación inválida');
   }
 
+  let parent = null;
   if (parentId) {
-    const existsParent = await existsId(parentId);
-    if (!existsParent) {
+    parent = await getById(parentId);
+    if (!parent) {
       throw new IdentifiedError(
         ErrorCode.INVALID_COMMENT_PARENT,
         'Pariente de comentario inválido'
@@ -49,8 +51,27 @@ export async function create(authorId, { postId, parentId = null, content }) {
     content,
   });
 
+  let targetId;
+  let message;
+
+  if (parent) {
+    targetId = parent.author._id;
+    message = `${author.username} ha respondido a tu comentario`;
+  } else {
+    targetId = post.author._id;
+    message = `${author.username} ha puesto un comentario en tu publicación`;
+  }
+
+  await notificationService.create({
+    senderId: authorId,
+    targetId,
+    postId,
+    commentId: comment._id,
+    message,
+  });
+
   console.log(
-    `💭 [comment-service]: Created comment from author ${authorId} on post ${postId}`,
+    `💭 [comment-service]: ${authorId} has created a comment somewhere in earth`,
     comment
   );
 

@@ -15,7 +15,7 @@ const router = express.Router();
 router.get(
   '/posts',
   validateGetAllPostsInput,
-  // updateFeaturedPosts,
+  updateFeaturedPosts,
   tryCatch(postController.getAllPosts)
 );
 

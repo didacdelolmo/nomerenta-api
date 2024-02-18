@@ -1,5 +1,4 @@
 import { Schema, Types, model } from 'mongoose';
-import * as commentService from '../services/comment-service.mjs';
 
 const PostSchema = new Schema(
   {

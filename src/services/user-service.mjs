@@ -9,6 +9,7 @@ import RoleManager from '../roles/role-manager.mjs';
 import Premium from '../roles/presets/premium.mjs';
 import axios from 'axios';
 import RoleIdentifier from '../roles/role-identifier.mjs';
+import * as notificationService from './notification-service.mjs';
 
 export async function getById(userId, includeHashedPassword = false) {
   return UserModel.findById(userId).select(
@@ -148,13 +149,17 @@ export async function tryToApplyPremium(user) {
     user.roleId = RoleIdentifier.PREMIUM;
 
     await user.save();
+    await notificationService.create({
+      targetId: user_id,
+      message: '¡Gracias por comprar PREMIUM! 🏆',
+    });
 
     console.log(`🏆 [user-service]: ${user.username} has purchased PREMIUM!`);
   }
 }
 
 export async function setOutsiderBiography(adminId, targetId, content) {
-  const admin = await getById(adminId);
+  const admin = await UserModel.findById(adminId).select('+actions');
   const target = await getById(targetId);
 
   if (!admin || !target) {
@@ -191,7 +196,7 @@ export async function setOutsiderBiography(adminId, targetId, content) {
 }
 
 export async function setOutsiderFlair(adminId, targetId, content) {
-  const admin = await getById(adminId);
+  const admin = await UserModel.findById(adminId).select('+actions');
   const target = await getById(targetId);
 
   if (!admin || !target) {

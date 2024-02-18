@@ -2,6 +2,39 @@ import { Schema, Types, model } from 'mongoose';
 import RoleIdentifier from '../roles/role-identifier.mjs';
 import RoleManager from '../roles/role-manager.mjs';
 
+const ActionSchema = new Schema({
+  biography: {
+    type: [
+      {
+        _id: false,
+        date: { type: Date, required: true },
+        target: { type: Types.ObjectId, ref: 'User', required: true },
+      },
+    ],
+    default: [],
+  },
+  flair: {
+    type: [
+      {
+        _id: false,
+        date: { type: Date, required: true },
+        target: { type: Types.ObjectId, ref: 'User', required: true },
+      },
+    ],
+    default: [],
+  },
+  featured: {
+    type: [
+      {
+        _id: false,
+        date: { type: Date, required: true },
+        post: { type: Types.ObjectId, ref: 'Post', required: true },
+      },
+    ],
+    default: [],
+  },
+});
+
 const UserSchema = new Schema(
   {
     username: { type: String, required: true, unique: true, index: true },
@@ -12,36 +45,9 @@ const UserSchema = new Schema(
     flair: { type: String, default: null },
     anonymous: { type: Boolean, default: false },
     actions: {
-      biography: {
-        type: [
-          {
-            _id: false,
-            date: { type: Date, required: true },
-            target: { type: Types.ObjectId, ref: 'User', required: true },
-          },
-        ],
-        default: [],
-      },
-      flair: {
-        type: [
-          {
-            _id: false,
-            date: { type: Date, required: true },
-            target: { type: Types.ObjectId, ref: 'User', required: true },
-          },
-        ],
-        default: [],
-      },
-      featured: {
-        type: [
-          {
-            _id: false,
-            date: { type: Date, required: true },
-            post: { type: Types.ObjectId, ref: 'Post', required: true },
-          },
-        ],
-        default: [],
-      },
+      type: ActionSchema,
+      default: {},
+      select: false,
     },
   },
   { timestamps: true }
