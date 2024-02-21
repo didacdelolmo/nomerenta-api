@@ -8,12 +8,16 @@ export async function getPost(req, res) {
   res.send(await postService.getById(req.params.id));
 }
 
+export async function getCurrentUserPosts(req, res) {
+  res.send(await postService.getByAuthor(req.session.userId));
+}
+
 export async function getUserPost(req, res) {
   res.send(await postService.getByAuthor(req.params.id));
 }
 
-export async function getCurrentUserPosts(req, res) {
-  res.send(await postService.getByAuthor(req.session.userId));
+export async function getFollowsPosts(req, res) {
+  res.send(await postService.getByFollows(req.session.userId));
 }
 
 export async function post(req, res) {

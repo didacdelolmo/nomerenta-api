@@ -34,6 +34,12 @@ router.get(
   tryCatch(postController.getUserPost)
 );
 
+router.get(
+  '/users/me/following/posts',
+  isAuthenticated,
+  tryCatch(postController.getFollowsPosts)
+);
+
 router.post(
   '/users/me/posts',
   isAuthenticated,

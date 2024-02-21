@@ -37,17 +37,30 @@ const ActionSchema = new Schema({
 
 const UserSchema = new Schema(
   {
+    email: { type: String, default: null, select: false },
     username: { type: String, required: true, unique: true, index: true },
     hashedPassword: { type: String, required: true, select: false },
     avatar: { type: String, default: null },
     roleId: { type: String, default: RoleIdentifier.MEMBER },
-    biography: { type: String, default: null },
     flair: { type: String, default: null },
-    anonymous: { type: Boolean, default: false },
+    biography: { type: String, default: null },
+    following: {
+      type: [{ type: Types.ObjectId, ref: 'User' }],
+      default: [],
+    },
+    followers: {
+      type: [{ type: Types.ObjectId, ref: 'User' }],
+      default: [],
+    },
     actions: {
       type: ActionSchema,
       default: {},
       select: false,
+    },
+    redeemedInvitation: {
+      type: Types.ObjectId,
+      ref: 'Invitation',
+      default: null,
     },
   },
   { timestamps: true }

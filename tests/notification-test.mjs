@@ -40,7 +40,7 @@ describe('Notification endpoints', () => {
 
   it('Should get all user unseen notifications count', async () => {
     const response = await supertest(app)
-      .get('/users/me/notifications/count')
+      .get('/users/me/notifications/unseen/count')
       .set('Cookie', user.cookie);
 
     assert.strictEqual(response.status, 200);

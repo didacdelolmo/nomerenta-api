@@ -4,7 +4,7 @@ export async function getCurrentUserNotifications(req, res) {
   res.send(await notificationService.getByTarget(req.session.userId));
 }
 
-export async function getCurrentUserNotificationCount(req, res) {
+export async function getCurrentUserUnseenNotificationsCount(req, res) {
   res.json(
     await notificationService.getUnseenCountByTarget(req.session.userId)
   );

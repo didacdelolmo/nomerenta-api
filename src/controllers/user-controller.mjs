@@ -8,12 +8,6 @@ export async function register(req, res) {
   res.send(user);
 }
 
-export async function registerAnonimously(req, res) {
-  const user = await authService.registerAnonimously();
-  authenticate(user, req);
-  res.send(user);
-}
-
 export async function login(req, res) {
   const user = await authService.login(req.body);
   authenticate(user, req);
@@ -34,6 +28,14 @@ export async function getUser(req, res) {
 
 export async function updateAvatar(req, res) {
   res.send(await userService.setAvatar(req.session.userId, req.file));
+}
+
+export async function follow(req, res) {
+  res.send(await userService.follow(req.session.userId, req.params.id));
+}
+
+export async function unfollow(req, res) {
+  res.send(await userService.unfollow(req.session.userId, req.params.id));
 }
 
 export async function setOutsiderBiography(req, res) {

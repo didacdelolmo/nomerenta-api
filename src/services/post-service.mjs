@@ -17,6 +17,17 @@ export async function getFeatured() {
   return PostModel.find({ featuredUntil: { $ne: null } });
 }
 
+export async function getByFollows(userId) {
+  const user = await UserModel.findById(userId).select('following');
+  if (!user) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
+  }
+
+  return PostModel.find({ author: { $in: user.following } }).sort({
+    createdAt: -1,
+  });
+}
+
 export async function getAll({ sortBy = 'score', start = 0, limit = null }) {
   const allowedSortFields = ['score', 'createdAt'];
 

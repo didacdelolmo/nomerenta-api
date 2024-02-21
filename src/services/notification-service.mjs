@@ -6,7 +6,7 @@ import ErrorCode from '../errors/error-code.mjs';
 import NotificationModel from '../models/notification-model.mjs';
 
 export async function getByTarget(targetId) {
-  return NotificationModel.find({ target: targetId }).populate('sender post');
+  return NotificationModel.find({ target: targetId }).sort({ createdAt: -1 }).populate('sender post');
 }
 
 export async function getUnseenCountByTarget(targetId) {
@@ -74,7 +74,7 @@ export async function create({
 }
 
 export async function markEverythingAsSeen(targetId) {
-  NotificationModel.updateMany(
+  await NotificationModel.updateMany(
     { target: targetId, seen: false },
     { $set: { seen: true } }
   );

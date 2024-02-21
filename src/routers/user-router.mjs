@@ -1,8 +1,9 @@
 import express from 'express';
 import {
-  validateAuthInput,
   validateAvatarInput,
   validateGetUsersInput,
+  validateLoginInput,
+  validateRegisterInput,
   validateSetOutsiderBiographyInput,
   validateSetOutsiderFlairInput,
 } from '../validation/user-validation.mjs';
@@ -14,14 +15,13 @@ import { validateId } from '../validation/params-validation.mjs';
 
 const router = express.Router();
 
-router.post('/register', validateAuthInput, tryCatch(userController.register));
-
 router.post(
-  '/registerAnonimously',
-  tryCatch(userController.registerAnonimously)
+  '/register',
+  validateRegisterInput,
+  tryCatch(userController.register)
 );
 
-router.post('/login', validateAuthInput, tryCatch(userController.login));
+router.post('/login', validateLoginInput, tryCatch(userController.login));
 
 router.get(
   '/users',
@@ -43,6 +43,20 @@ router.patch(
   uploadAvatar,
   validateAvatarInput,
   tryCatch(userController.updateAvatar)
+);
+
+router.post(
+  '/users/:id/follow',
+  isAuthenticated,
+  validateId,
+  tryCatch(userController.follow)
+);
+
+router.post(
+  '/users/:id/unfollow',
+  isAuthenticated,
+  validateId,
+  tryCatch(userController.unfollow)
 );
 
 router.patch(

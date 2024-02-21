@@ -2,7 +2,17 @@ import { celebrate, Joi } from 'celebrate';
 import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
 
-export const validateAuthInput = (req, res, next) => {
+export const validateRegisterInput = (req, res, next) => {
+  celebrate({
+    body: {
+      username: Joi.string().required(),
+      password: Joi.string().required(),
+      code: Joi.string().required(),
+    },
+  })(req, res, next);
+};
+
+export const validateLoginInput = (req, res, next) => {
   celebrate({
     body: {
       username: Joi.string().required(),

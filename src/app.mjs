@@ -1,16 +1,17 @@
 import './config/database.mjs';
 import express from 'express';
-import { sessionHandler } from './config/session-handler.mjs';
 import userRouter from './routers/user-router.mjs';
 import notificationRouter from './routers/notification-router.mjs';
 import postRouter from './routers/post-router.mjs';
 import counterRouter from './routers/counter-router.mjs';
 import commentRouter from './routers/comment-router.mjs';
-import { errorHandler } from './errors/error-handler.mjs';
-import bodyParser from 'body-parser';
+import invitationRouter from './routers/invitation-router.mjs';
 import cors from 'cors';
-import { initializeCounter } from './config/counter.mjs';
+import bodyParser from 'body-parser';
 import helmet from 'helmet';
+import { sessionHandler } from './config/session-handler.mjs';
+import { errorHandler } from './errors/error-handler.mjs';
+import { initializeCounter } from './config/counter.mjs';
 import { rateLimit } from 'express-rate-limit';
 
 initializeCounter().catch((error) => {
@@ -27,7 +28,7 @@ app.use(
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: 500,
   })
 );
 
@@ -64,6 +65,7 @@ app.use(postRouter);
 app.use(commentRouter);
 app.use(notificationRouter);
 app.use(counterRouter);
+app.use(invitationRouter);
 
 app.use(errorHandler);
 

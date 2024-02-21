@@ -50,12 +50,11 @@ export async function countAnonymous() {
   return UserModel.countDocuments({ username: { $regex: /^Anónimo \d+$/ } });
 }
 
-export async function create(username, hashedPassword, roleId, anonymous) {
+export async function create(username, hashedPassword, roleId) {
   const user = await UserModel.create({
     username,
     hashedPassword,
     roleId,
-    anonymous,
   });
 
   console.log(
@@ -136,6 +135,44 @@ export async function setAvatar(userId, avatar) {
   return user;
 }
 
+export async function follow(userId, targetId) {
+  const user = await getById(userId);
+  const target = await getById(targetId);
+
+  if (!user || !target) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
+  }
+
+  if (!user.following.includes(targetId)) {
+    user.following.push(targetId);
+  }
+  if (!target.followers.includes(userId)) {
+    target.followers.push(userId);
+  }
+
+  await user.save();
+  await target.save();
+
+  return user;
+}
+
+export async function unfollow(userId, targetId) {
+  const user = await getById(userId);
+  const target = await getById(targetId);
+
+  if (!user || !target) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
+  }
+
+  user.following = user.following.filter((follow) => follow !== targetId);
+  target.followers = target.followers.filter((follow) => follow !== userId);
+  
+  await user.save();
+  await target.save();
+
+  return user;
+}
+
 export async function setOutsiderBiography(adminId, targetId, content) {
   const admin = await UserModel.findById(adminId).select('+actions');
   const target = await getById(targetId);
@@ -155,7 +192,7 @@ export async function setOutsiderBiography(adminId, targetId, content) {
   if (!canPerformAdminAction(admin, 'biography')) {
     throw new IdentifiedError(
       ErrorCode.REACHED_ACTION_LIMIT,
-      'Has llegado al limite de veces que puedes realizar esta acción diariamente'
+      'Has llegado al limite diario de veces que puedes realizar esta acción'
     );
   }
 
@@ -215,9 +252,9 @@ export function canPerformAdminAction(user, action) {
   today.setHours(0, 0, 0, 0);
 
   const limits = {
-    biography: 2,
-    flair: 2,
-    featured: 1,
+    biography: 5,
+    flair: 5,
+    featured: 2,
   };
 
   if (!(action in limits)) {

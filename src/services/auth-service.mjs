@@ -1,15 +1,16 @@
 import argon2 from 'argon2';
 import * as userService from './user-service.mjs';
+import * as invitationService from './invitation-service.mjs';
 import IdentifiedError from '../errors/identified-error.mjs';
 import ErrorCode from '../errors/error-code.mjs';
-import crypto from 'crypto';
 import RoleIdentifier from '../roles/role-identifier.mjs';
+import UserModel from '../models/user-model.mjs';
 
 export async function register({
   username,
   password,
   roleId = RoleIdentifier.MEMBER,
-  anonymous = false,
+  code,
 }) {
   if (username.length >= 16) {
     throw new IdentifiedError(
@@ -20,27 +21,50 @@ export async function register({
 
   const existsUser = await userService.existsUsername(username);
   if (existsUser) {
-    throw new IdentifiedError(ErrorCode.USERNAME_TAKEN, 'Nombre ocupado');
+    throw new IdentifiedError(
+      ErrorCode.USERNAME_TAKEN,
+      'Este nombre está ocupado'
+    );
+  }
+
+  let invitation = await invitationService.getByCode(code);
+  if (!invitation) {
+    throw new IdentifiedError(
+      ErrorCode.INVALID_INVITATION,
+      'Esta invitación no existe'
+    );
+  } else if (!invitation.reusable && invitation.redeemed) {
+    throw new IdentifiedError(
+      ErrorCode.INVITATION_ALREADY_REDEEMED,
+      'Esta invitación ya ha sido usada'
+    );
+  } else if (
+    invitation.expirationDate &&
+    invitation.expirationDate < new Date()
+  ) {
+    throw new IdentifiedError(
+      ErrorCode.INVITATION_EXPIRED,
+      'Esta invitación ha caducado'
+    );
   }
 
   const hashedPassword = await argon2.hash(password);
 
-  const user = await userService.create(
+  const user = new UserModel({
     username,
     hashedPassword,
     roleId,
-    anonymous
-  );
+  });
+
+  invitation.target = user._id;
+  invitation.redeemed = true;
+
+  user.redeemedInvitation = invitation;
+
+  await user.save();
+  await invitation.save();
 
   return user.withoutHashedPassword();
-}
-
-export async function registerAnonimously() {
-  const count = await userService.countAnonymous();
-  const username = `Anónimo ${count + 1}`;
-  const password = crypto.randomBytes(20).toString('base64');
-
-  return register({ username, password, anonymous: true });
 }
 
 export async function login({ username, password }) {
@@ -48,7 +72,7 @@ export async function login({ username, password }) {
   if (!user) {
     throw new IdentifiedError(
       ErrorCode.INVALID_CREDENTIALS,
-      'Credenciales invalidas'
+      'Credenciales inválidas'
     );
   }
 
@@ -56,7 +80,7 @@ export async function login({ username, password }) {
   if (!matchesPassword) {
     throw new IdentifiedError(
       ErrorCode.INVALID_CREDENTIALS,
-      'Credenciales invalidas'
+      'Credenciales inválidas'
     );
   }
 

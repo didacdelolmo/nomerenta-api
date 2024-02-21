@@ -4,6 +4,7 @@ import * as authService from '../../src/services/auth-service.mjs';
 import supertest from 'supertest';
 import app from '../../src/app.mjs';
 import RoleIdentifier from '../../src/roles/role-identifier.mjs';
+import InvitationFixture from './invitation-fixture.mjs';
 
 class UserFixture {
   _id;
@@ -11,22 +12,19 @@ class UserFixture {
   username;
   password;
   roleId;
-  anonymous;
+  code;
 
-  constructor(username, password, roleId, anonymous) {
+  constructor(username, password, roleId, code) {
     this.username = username;
     this.password = password;
     this.roleId = roleId;
-    this.anonymous = anonymous;
+    this.code = code;
   }
 
-  static async create(
-    username,
-    password,
-    roleId = RoleIdentifier.MEMBER,
-    anonymous = false
-  ) {
-    const user = new this(username, password, roleId, anonymous);
+  static async create(username, password, roleId = RoleIdentifier.MEMBER) {
+    const invitation = await InvitationFixture.create({});
+
+    const user = new this(username, password, roleId, invitation.code);
     await user.authenticate();
     return user;
   }
@@ -49,7 +47,7 @@ class UserFixture {
       username: this.username,
       password: this.password,
       roleId: this.roleId,
-      anonymous: this.anonymous,
+      code: this.code,
     });
   }
 

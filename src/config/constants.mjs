@@ -1,0 +1,4 @@
+export default {
+  MAXIMUM_USER_INVITATIONS: 10,
+  DEFAULT_USER_INVITATIONS: 10,
+};

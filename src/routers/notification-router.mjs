@@ -12,9 +12,9 @@ router.get(
 );
 
 router.get(
-  '/users/me/notifications/count',
+  '/users/me/notifications/unseen/count',
   isAuthenticated,
-  tryCatch(notificationController.getCurrentUserNotificationCount)
+  tryCatch(notificationController.getCurrentUserUnseenNotificationsCount)
 );
 
 router.patch(
