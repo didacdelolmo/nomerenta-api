@@ -18,7 +18,11 @@ describe('Post endpoints', () => {
     await PostFixture.clean();
 
     user = await UserFixture.create('diego', 'hjkl6789');
-    professor = await UserFixture.create('professor', 'professor', RoleIdentifier.PROFESSOR);
+    professor = await UserFixture.create(
+      'professor',
+      'professor',
+      RoleIdentifier.PROFESSOR
+    );
 
     post1 = await PostFixture.create(
       user._id,
@@ -44,6 +48,20 @@ describe('Post endpoints', () => {
     );
 
     console.log('response is', response.body);
+
+    assert.strictEqual(response.status, 200);
+  });
+
+  it(`Should get all posts from a user's follows`, async () => {
+    await supertest(app)
+      .post(`/users/${user._id}/follow`)
+      .set('Cookie', professor.cookie);
+
+    const response = await supertest(app)
+      .get('/users/me/following/posts')
+      .set('Cookie', professor.cookie);
+
+    console.log('dam bro', response.body);
 
     assert.strictEqual(response.status, 200);
   });

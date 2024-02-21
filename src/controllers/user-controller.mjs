@@ -30,6 +30,14 @@ export async function updateAvatar(req, res) {
   res.send(await userService.setAvatar(req.session.userId, req.file));
 }
 
+export async function getFollows(req, res) {
+  res.send(await userService.getFollows(req.session.userId));
+}
+
+export async function getFollowers(req, res) {
+  res.send(await userService.getFollowers(req.session.userId));
+}
+
 export async function follow(req, res) {
   res.send(await userService.follow(req.session.userId, req.params.id));
 }

@@ -24,13 +24,6 @@ class InvitationFixture {
     reusable = false,
     expirationDate = null,
   }) {
-    console.log('wenos dias', {
-      ownerId,
-      email,
-      reusable,
-      expirationDate
-    })
-    
     const invitation = new this(ownerId, email, reusable, expirationDate);
     await invitation.insert();
     return invitation;

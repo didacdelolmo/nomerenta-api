@@ -47,20 +47,26 @@ const UserSchema = new Schema(
     following: {
       type: [{ type: Types.ObjectId, ref: 'User' }],
       default: [],
+      select: false,
     },
     followers: {
       type: [{ type: Types.ObjectId, ref: 'User' }],
       default: [],
+      select: false,
     },
     bookmarks: {
-      posts: {
-        type: [{ type: Types.ObjectId, ref: 'Post' }],
-        default: [],
+      type: {
+        posts: {
+          type: [{ type: Types.ObjectId, ref: 'Post' }],
+          default: [],
+        },
+        comments: {
+          type: [{ type: Types.ObjectId, ref: 'Comment' }],
+          default: [],
+        },
       },
-      comments: {
-        type: [{ type: Types.ObjectId, ref: 'Comment' }],
-        default: [],
-      },
+      default: {},
+      select: false,
     },
     actions: {
       type: ActionSchema,
@@ -71,6 +77,7 @@ const UserSchema = new Schema(
       type: Types.ObjectId,
       ref: 'Invitation',
       default: null,
+      select: false,
     },
   },
   { timestamps: true }

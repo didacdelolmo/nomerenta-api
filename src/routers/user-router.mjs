@@ -45,6 +45,18 @@ router.patch(
   tryCatch(userController.updateAvatar)
 );
 
+router.get(
+  '/users/me/following',
+  isAuthenticated,
+  tryCatch(userController.getFollows)
+);
+
+router.get(
+  '/users/me/followers',
+  isAuthenticated,
+  tryCatch(userController.getFollowers)
+);
+
 router.post(
   '/users/:id/follow',
   isAuthenticated,

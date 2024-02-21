@@ -30,7 +30,11 @@ describe('User endpoints', () => {
       RoleIdentifier.PREMIUM
     );
 
-    editor = await UserFixture.create('editor', 'editor', RoleIdentifier.EDITOR);
+    editor = await UserFixture.create(
+      'editor',
+      'editor',
+      RoleIdentifier.EDITOR
+    );
     target = await UserFixture.create(
       'target',
       'target',
@@ -113,7 +117,7 @@ describe('User endpoints', () => {
 
     assert.strictEqual(response.status, 200);
   });
-  
+
   it('Should NOT update a user avatar because the image is too big', async () => {
     const pathString = fileURLToPath(import.meta.url);
     const dirString = dirname(pathString);
@@ -161,4 +165,27 @@ describe('User endpoints', () => {
   //     .send({ biography: 'I am coolest' });
   //   assert.strictEqual(response.status, 400);
   // });
+
+  it('Should create 10 invitation codes for a newly registered user', async () => {
+    const response = await supertest(app)
+      .post('/users/me/invitations')
+      .set('Cookie', user.cookie)
+      .send({ email: 'didacdelolmo@gmail.com' });
+
+    console.log(response.body);
+
+    assert.strictEqual(response.status, 200);
+  });
+
+  it('Should follow and unfollow a user on behalf of a user', async () => {
+    let response = await supertest(app)
+      .post(`/users/${target._id}/follow`)
+      .set('Cookie', editor.cookie);
+
+    response = await supertest(app)
+      .post(`/users/${target._id}/unfollow`)
+      .set('Cookie', editor.cookie);
+
+    assert.strictEqual(response.status, 200);
+  });
 });

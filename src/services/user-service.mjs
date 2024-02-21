@@ -7,7 +7,6 @@ import 'dotenv/config';
 import { dirname, extname, resolve } from 'path';
 import sanitize from 'sanitize-filename';
 import RoleManager from '../roles/role-manager.mjs';
-import Premium from '../roles/presets/premium.mjs';
 import RoleIdentifier from '../roles/role-identifier.mjs';
 import * as notificationService from './notification-service.mjs';
 import Stripe from 'stripe';
@@ -27,6 +26,14 @@ export async function getByUsername(username, includeHashedPassword = false) {
   return UserModel.findOne({ username }).select(
     includeHashedPassword ? '+hashedPassword' : '-hashedPassword'
   );
+}
+
+export async function getFollows(userId) {
+  return UserModel.findById(userId).select('following').populate('following');
+}
+
+export async function getFollowers(userId) {
+  return UserModel.findById(userId).select('followers').populate('followers');
 }
 
 export async function getAll(username, start = 0) {
@@ -136,8 +143,8 @@ export async function setAvatar(userId, avatar) {
 }
 
 export async function follow(userId, targetId) {
-  const user = await getById(userId);
-  const target = await getById(targetId);
+  const user = await UserModel.findById(userId).select('following');
+  const target = await UserModel.findById(targetId).select('followers');
 
   if (!user || !target) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
@@ -157,15 +164,19 @@ export async function follow(userId, targetId) {
 }
 
 export async function unfollow(userId, targetId) {
-  const user = await getById(userId);
-  const target = await getById(targetId);
+  const user = await UserModel.findById(userId).select('following');
+  const target = await UserModel.findById(targetId).select('followers');
 
   if (!user || !target) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
   }
 
-  user.following = user.following.filter((follow) => follow !== targetId);
-  target.followers = target.followers.filter((follow) => follow !== userId);
+  user.following = user.following.filter(
+    (follow) => follow.toString() !== targetId
+  );
+  target.followers = target.followers.filter(
+    (follow) => follow.toString() !== userId
+  );
 
   await user.save();
   await target.save();
