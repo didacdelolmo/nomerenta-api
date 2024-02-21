@@ -14,7 +14,7 @@ export async function getByAuthor(userId) {
 }
 
 export async function getFeatured() {
-  return PostModel.find({ featuredUntil: { $ne: null } });
+  return PostModel.find({ featuredUntil: { $ne: null } }).populate('author');
 }
 
 export async function getByFollows(userId) {
@@ -23,9 +23,11 @@ export async function getByFollows(userId) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
   }
 
-  return PostModel.find({ author: { $in: user.following } }).sort({
-    createdAt: -1,
-  });
+  return PostModel.find({ author: { $in: user.following } })
+    .sort({
+      createdAt: -1,
+    })
+    .populate('author');
 }
 
 export async function getAll({ sortBy = 'score', start = 0, limit = null }) {

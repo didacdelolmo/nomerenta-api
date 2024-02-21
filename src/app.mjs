@@ -13,6 +13,7 @@ import { sessionHandler } from './config/session-handler.mjs';
 import { errorHandler } from './errors/error-handler.mjs';
 import { initializeCounter } from './config/counter.mjs';
 import { rateLimit } from 'express-rate-limit';
+import { trackVisit } from './middleware/track-visit.mjs';
 
 initializeCounter().catch((error) => {
   console.error('❌ [counter]: Something went wrong:', error);
@@ -57,6 +58,7 @@ app.use(
 );
 
 app.use(sessionHandler);
+app.use(trackVisit);
 
 app.use('/avatars', express.static('assets/avatars'));
 

@@ -52,6 +52,16 @@ const UserSchema = new Schema(
       type: [{ type: Types.ObjectId, ref: 'User' }],
       default: [],
     },
+    bookmarks: {
+      posts: {
+        type: [{ type: Types.ObjectId, ref: 'Post' }],
+        default: [],
+      },
+      comments: {
+        type: [{ type: Types.ObjectId, ref: 'Comment' }],
+        default: [],
+      },
+    },
     actions: {
       type: ActionSchema,
       default: {},
