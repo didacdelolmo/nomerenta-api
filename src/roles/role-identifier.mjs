@@ -1,8 +1,12 @@
 const RoleIdentifier = {
   MEMBER: 'member',
   PREMIUM: 'premium',
-  ADMIN: 'admin',
-  BOSS: 'boss',
+  EDITOR: 'editor',
+  JUDGE: 'judge',
+  POLICE_OFFICER: 'police_officer',
+  PROFESSOR: 'professor',
+  DEALER: 'dealer',
+  DICTATOR: 'dictator',
 };
 
 export default RoleIdentifier;

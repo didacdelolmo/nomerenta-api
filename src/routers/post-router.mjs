@@ -2,7 +2,6 @@ import express from 'express';
 import isAuthenticated from '../middleware/is-authenticated.mjs';
 import {
   validateCreatePostInput,
-  validateFeaturePostInput,
   validateGetAllPostsInput,
 } from '../validation/post-validation.mjs';
 import { tryCatch } from '../utils/try-catch.mjs';

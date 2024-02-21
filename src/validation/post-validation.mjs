@@ -18,11 +18,3 @@ export const validateGetAllPostsInput = (req, res, next) => {
     },
   })(req, res, next);
 };
-
-export const validateFeaturePostInput = (req, res, next) => {
-  celebrate({
-    params: {
-      postId: Joi.string().required(),
-    },
-  })(req, res, next);
-};

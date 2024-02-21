@@ -1,11 +1,9 @@
 import Premium from './premium.mjs';
 
-class Admin extends Premium {
-  canSetBiography = true;
+class Dictator extends Premium {
   canSetOutsiderBiography = true;
-  canSetFlair = true;
   canSetOutsiderFlair = true;
   canFeaturePosts = true;
 }
 
-export default Admin;
+export default Dictator;
