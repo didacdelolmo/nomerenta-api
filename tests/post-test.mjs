@@ -8,7 +8,7 @@ import RoleIdentifier from '../src/roles/role-identifier.mjs';
 
 describe('Post endpoints', () => {
   let user;
-  let admin;
+  let professor;
 
   let post1;
   let post2;
@@ -18,7 +18,7 @@ describe('Post endpoints', () => {
     await PostFixture.clean();
 
     user = await UserFixture.create('diego', 'hjkl6789');
-    admin = await UserFixture.create('admin', 'admin', RoleIdentifier.ADMIN);
+    professor = await UserFixture.create('professor', 'professor', RoleIdentifier.PROFESSOR);
 
     post1 = await PostFixture.create(
       user._id,
@@ -108,10 +108,10 @@ describe('Post endpoints', () => {
     assert.strictEqual(secondResponse.status, 200);
   });
 
-  it(`Should allow an administrator to set a post as featured`, async () => {
+  it(`Should allow a professor to set a post as featured`, async () => {
     const response = await supertest(app)
       .patch(`/posts/${post1._id}/feature`)
-      .set('Cookie', admin.cookie);
+      .set('Cookie', professor.cookie);
 
     assert.strictEqual(response.status, 200);
   });

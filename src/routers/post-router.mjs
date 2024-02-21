@@ -14,8 +14,13 @@ const router = express.Router();
 router.get(
   '/posts',
   validateGetAllPostsInput,
-  updateFeaturedPosts,
   tryCatch(postController.getAllPosts)
+);
+
+router.get(
+  '/posts/featured',
+  updateFeaturedPosts,
+  tryCatch(postController.getFeaturedPosts)
 );
 
 router.get('/posts/:id', validateId, tryCatch(postController.getPost));

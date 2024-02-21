@@ -14,7 +14,7 @@ describe('User endpoints', () => {
   let invitation;
   let user;
 
-  let admin;
+  let editor;
   let target;
 
   before(async () => {
@@ -30,7 +30,7 @@ describe('User endpoints', () => {
       RoleIdentifier.PREMIUM
     );
 
-    admin = await UserFixture.create('admin', 'admin', RoleIdentifier.ADMIN);
+    editor = await UserFixture.create('editor', 'editor', RoleIdentifier.EDITOR);
     target = await UserFixture.create(
       'target',
       'target',
@@ -113,7 +113,7 @@ describe('User endpoints', () => {
 
     assert.strictEqual(response.status, 200);
   });
-
+  
   it('Should NOT update a user avatar because the image is too big', async () => {
     const pathString = fileURLToPath(import.meta.url);
     const dirString = dirname(pathString);
@@ -127,20 +127,20 @@ describe('User endpoints', () => {
     assert.strictEqual(response.status, 400);
   });
 
-  it(`Should allow an administrator to set someone else's biography`, async () => {
+  it(`Should allow an editor to set someone else's biography`, async () => {
     const response = await supertest(app)
       .patch(`/users/${target._id}/biography`)
-      .set('Cookie', admin.cookie)
+      .set('Cookie', editor.cookie)
       .send({ biography: 'I am cool' });
 
     assert.strictEqual(response.status, 200);
   });
 
-  // it(`Should NOT allow an administrator to set someone else's biography for the third time`, async () => {
+  // it(`Should NOT allow an editor to set someone else's biography for the third time`, async () => {
   //   const person = await UserFixture.create(
   //     'person',
   //     'person',
-  //     RoleIdentifier.ADMIN
+  //     RoleIdentifier.EDITOR
   //   );
 
   //   let response = await supertest(app)

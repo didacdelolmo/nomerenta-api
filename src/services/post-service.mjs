@@ -144,9 +144,9 @@ export async function decrementCommentsCount(postId) {
   ).exec();
 }
 
-export async function feature(adminId, postId) {
-  const admin = await UserModel.findById(adminId).select('+actions');
-  if (!admin) {
+export async function feature(userId, postId) {
+  const user = await UserModel.findById(userId).select('+actions');
+  if (!user) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
   }
 
@@ -155,7 +155,7 @@ export async function feature(adminId, postId) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Publicación inválida');
   }
 
-  const role = admin.role;
+  const role = user.role;
   if (!role.canFeaturePosts) {
     throw new IdentifiedError(
       ErrorCode.INSUFFICIENT_PERMISSIONS,
@@ -163,7 +163,7 @@ export async function feature(adminId, postId) {
     );
   }
 
-  if (!userService.canPerformAdminAction(admin, 'featured')) {
+  if (!userService.canPerformAction(user, 'featured')) {
     throw new IdentifiedError(
       ErrorCode.REACHED_ACTION_LIMIT,
       'Has llegado al limite de veces que puedes realizar esta acción diariamente'
@@ -174,13 +174,13 @@ export async function feature(adminId, postId) {
   date.setHours(date.getHours() + 8);
 
   post.featuredUntil = date;
-  admin.actions.featured.push({ date: new Date(), post: post._id });
+  user.actions.featured.push({ date: new Date(), post: post._id });
 
-  await admin.save();
+  await user.save();
   await post.save();
 
   console.log(
-    `🌿 [post-service]: Administrator ${admin.username} featured the post with id ${post._id}`,
+    `🌿 [post-service]: Professor ${user.username} featured the post with id ${post._id}`,
     post
   );
 

@@ -4,6 +4,10 @@ export async function getAllPosts(req, res) {
   res.send(await postService.getAll(req.query));
 }
 
+export async function getFeaturedPosts(req, res) {
+  res.send(await postService.getFeaturedPosts);
+}
+
 export async function getPost(req, res) {
   res.send(await postService.getById(req.params.id));
 }

@@ -10,9 +10,9 @@ import RoleManager from '../roles/role-manager.mjs';
 import Premium from '../roles/presets/premium.mjs';
 import RoleIdentifier from '../roles/role-identifier.mjs';
 import * as notificationService from './notification-service.mjs';
-import Admin from '../roles/presets/admin.mjs';
-import Boss from '../roles/presets/boss.mjs';
 import Stripe from 'stripe';
+import Member from '../roles/presets/member.mjs';
+import constants from '../config/constants.mjs';
 
 const { STRIPE_API_KEY } = process.env;
 const stripe = new Stripe(STRIPE_API_KEY);
@@ -166,59 +166,22 @@ export async function unfollow(userId, targetId) {
 
   user.following = user.following.filter((follow) => follow !== targetId);
   target.followers = target.followers.filter((follow) => follow !== userId);
-  
+
   await user.save();
   await target.save();
 
   return user;
 }
 
-export async function setOutsiderBiography(adminId, targetId, content) {
-  const admin = await UserModel.findById(adminId).select('+actions');
+export async function setOutsiderFlair(userId, targetId, content) {
+  const user = await UserModel.findById(userId).select('+actions');
   const target = await getById(targetId);
 
-  if (!admin || !target) {
+  if (!user || !target) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
   }
 
-  const role = admin.role;
-  if (!role.canSetOutsiderBiography) {
-    throw new IdentifiedError(
-      ErrorCode.INSUFFICIENT_PERMISSIONS,
-      'No tienes permisos para realizar esta acción'
-    );
-  }
-
-  if (!canPerformAdminAction(admin, 'biography')) {
-    throw new IdentifiedError(
-      ErrorCode.REACHED_ACTION_LIMIT,
-      'Has llegado al limite diario de veces que puedes realizar esta acción'
-    );
-  }
-
-  target.biography = content;
-  admin.actions.biography.push({ date: new Date(), target: target._id });
-
-  await target.save();
-  await admin.save();
-
-  console.log(
-    `📷 [user-service]: Administrator ${admin.username} updated the biography for user ${target.username}`,
-    target
-  );
-
-  return target;
-}
-
-export async function setOutsiderFlair(adminId, targetId, content) {
-  const admin = await UserModel.findById(adminId).select('+actions');
-  const target = await getById(targetId);
-
-  if (!admin || !target) {
-    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
-  }
-
-  const role = admin.role;
+  const role = user.role;
   if (!role.canSetOutsiderFlair) {
     throw new IdentifiedError(
       ErrorCode.INSUFFICIENT_PERMISSIONS,
@@ -226,7 +189,7 @@ export async function setOutsiderFlair(adminId, targetId, content) {
     );
   }
 
-  if (!canPerformAdminAction(admin, 'flair')) {
+  if (!canPerformAction(user, 'flair')) {
     throw new IdentifiedError(
       ErrorCode.REACHED_ACTION_LIMIT,
       'Has llegado al limite de veces que puedes realizar esta acción diariamente'
@@ -234,33 +197,70 @@ export async function setOutsiderFlair(adminId, targetId, content) {
   }
 
   target.flair = content;
-  admin.actions.flair.push({ date: new Date(), target: target._id });
+  user.actions.flair.push({ date: new Date(), target: target._id });
 
   await target.save();
-  await admin.save();
+  await user.save();
 
   console.log(
-    `📷 [user-service]: Administrator ${admin.username} updated the biography for user ${target.username}`,
+    `📷 [user-service]: Editor ${user.username} updated the biography for user ${target.username}`,
     target
   );
 
   return target;
 }
 
-export function canPerformAdminAction(user, action) {
+export async function setOutsiderBiography(userId, targetId, content) {
+  const user = await UserModel.findById(userId).select('+actions');
+  const target = await getById(targetId);
+
+  if (!user || !target) {
+    throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
+  }
+
+  const role = user.role;
+  if (!role.canSetOutsiderBiography) {
+    throw new IdentifiedError(
+      ErrorCode.INSUFFICIENT_PERMISSIONS,
+      'No tienes permisos para realizar esta acción'
+    );
+  }
+
+  if (!canPerformAction(user, 'biography')) {
+    throw new IdentifiedError(
+      ErrorCode.REACHED_ACTION_LIMIT,
+      'Has llegado al limite diario de veces que puedes realizar esta acción'
+    );
+  }
+
+  target.biography = content;
+  user.actions.biography.push({ date: new Date(), target: target._id });
+
+  await target.save();
+  await user.save();
+
+  console.log(
+    `📷 [user-service]: Editor ${user.username} updated the biography for user ${target.username}`,
+    target
+  );
+
+  return target;
+}
+
+export function canPerformAction(user, action) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const limits = {
-    biography: 5,
-    flair: 5,
-    featured: 2,
+    flair: constants.DAILY_FLAIR_ACTIONS,
+    biography: constants.DAILY_BIOGRAPHY_ACTIONS,
+    featured: constants.DAILY_FEATURED_ACTIONS,
   };
 
   if (!(action in limits)) {
     throw new IdentifiedError(
-      ErrorCode.INVALID_ADMIN_ACTION,
-      'Esta acción de administrador no existe'
+      ErrorCode.INVALID_ACTION,
+      'Esta acción no existe'
     );
   }
 
@@ -275,11 +275,7 @@ export function canPerformAdminAction(user, action) {
 
 export async function tryToApplyPremium(user) {
   const role = user.role;
-  if (
-    role instanceof Premium ||
-    role instanceof Admin ||
-    role instanceof Boss
-  ) {
+  if (!role instanceof Member) {
     return;
   }
 
