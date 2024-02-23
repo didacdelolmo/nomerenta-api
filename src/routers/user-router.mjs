@@ -23,6 +23,8 @@ router.post(
 
 router.post('/login', validateLoginInput, tryCatch(userController.login));
 
+router.post('/logout', tryCatch(userController.logout));
+
 router.get(
   '/users',
   validateGetUsersInput,
@@ -46,14 +48,16 @@ router.patch(
 );
 
 router.get(
-  '/users/me/following',
+  '/users/:id/following',
   isAuthenticated,
+  validateId,
   tryCatch(userController.getFollows)
 );
 
 router.get(
-  '/users/me/followers',
+  '/users/:id/followers',
   isAuthenticated,
+  validateId,
   tryCatch(userController.getFollowers)
 );
 

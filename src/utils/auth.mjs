@@ -5,3 +5,8 @@ export const authenticate = (user, req) => {
 export const authenticated = (req) => {
   return req.session?.userId;
 };
+
+export const unauthenticate = async (req, res) => {
+  await req.session.destroy();
+  res.clearCookie('connect.sid', { path: '/' });
+};

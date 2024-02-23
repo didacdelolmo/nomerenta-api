@@ -58,8 +58,8 @@ export async function existsId(postId) {
 }
 
 export async function create(userId, { title, content }) {
-  const existsUser = await userService.existsId(userId);
-  if (!existsUser) {
+  const user = await userService.getById(userId);
+  if (!user) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
   }
 
@@ -67,6 +67,7 @@ export async function create(userId, { title, content }) {
     author: userId,
     title,
     content,
+    format: user.role.canFormatText,
   });
 
   console.log(`🍁 [post-service]: Created post from author ${userId}`, post);

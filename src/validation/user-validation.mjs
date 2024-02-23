@@ -23,7 +23,7 @@ export const validateLoginInput = (req, res, next) => {
 
 export const validateGetUsersInput = (req, res, next) => {
   celebrate({
-    body: {
+    query: {
       username: Joi.string().required(),
       start: Joi.number(),
     },

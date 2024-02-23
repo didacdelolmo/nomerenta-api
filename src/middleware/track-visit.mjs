@@ -16,7 +16,7 @@ export const trackVisit = async (req, res, next) => {
 
     if (visit) {
       const timeDifference = (date - visit.lastActionDate) / (60 * 1000);
-      if (timeDifference <= visit.durationFactor) {
+      if (timeDifference <= visit.inactivityFactor) {
         visit.lastActionDate = date;
         await visit.save();
       }

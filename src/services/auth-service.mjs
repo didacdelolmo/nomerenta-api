@@ -31,12 +31,12 @@ export async function register({
   if (!invitation) {
     throw new IdentifiedError(
       ErrorCode.INVALID_INVITATION,
-      'Esta invitación no existe'
+      'Este código de invitación no existe'
     );
   } else if (!invitation.reusable && invitation.redeemed) {
     throw new IdentifiedError(
       ErrorCode.INVITATION_ALREADY_REDEEMED,
-      'Esta invitación ya ha sido usada'
+      'Este código de invitación ya ha sido usado'
     );
   } else if (
     invitation.expirationDate &&
@@ -44,7 +44,7 @@ export async function register({
   ) {
     throw new IdentifiedError(
       ErrorCode.INVITATION_EXPIRED,
-      'Esta invitación ha caducado'
+      'Este código de invitación ha caducado'
     );
   }
 
@@ -56,7 +56,7 @@ export async function register({
     roleId,
   });
 
-  invitation.target = user._id;
+  invitation.targets.push(user._id);
   invitation.redeemed = true;
 
   user.redeemedInvitation = invitation;

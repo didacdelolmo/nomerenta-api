@@ -6,6 +6,12 @@ import { validateCreateInvitationsInput } from '../validation/invitation-validat
 
 const router = express.Router();
 
+router.get(
+  '/users/me/invitations',
+  isAuthenticated,
+  tryCatch(invitationController.getCurrentUserInvitations)
+);
+
 router.post(
   '/users/me/invitations',
   isAuthenticated,

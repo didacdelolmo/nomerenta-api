@@ -44,6 +44,7 @@ const CommentSchema = new Schema(
       default: [],
     },
     score: { type: Number, default: 0 },
+    format: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

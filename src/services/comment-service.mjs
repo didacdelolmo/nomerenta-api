@@ -49,6 +49,7 @@ export async function create(authorId, { postId, parentId = null, content }) {
     post: postId,
     parent: parentId,
     content,
+    format: author.role.canFormatText,
   });
 
   let targetId;

@@ -10,8 +10,8 @@ import RoleManager from '../roles/role-manager.mjs';
 import RoleIdentifier from '../roles/role-identifier.mjs';
 import * as notificationService from './notification-service.mjs';
 import Stripe from 'stripe';
-import Member from '../roles/presets/member.mjs';
 import constants from '../config/constants.mjs';
+import Premium from '../roles/presets/premium.mjs';
 
 const { STRIPE_API_KEY } = process.env;
 const stripe = new Stripe(STRIPE_API_KEY);
@@ -143,7 +143,7 @@ export async function setAvatar(userId, avatar) {
 }
 
 export async function follow(userId, targetId) {
-  const user = await UserModel.findById(userId).select('following');
+  const user = await UserModel.findById(userId).select('+following');
   const target = await UserModel.findById(targetId).select('followers');
 
   if (!user || !target) {
@@ -164,7 +164,7 @@ export async function follow(userId, targetId) {
 }
 
 export async function unfollow(userId, targetId) {
-  const user = await UserModel.findById(userId).select('following');
+  const user = await UserModel.findById(userId).select('+following');
   const target = await UserModel.findById(targetId).select('followers');
 
   if (!user || !target) {
@@ -286,7 +286,7 @@ export function canPerformAction(user, action) {
 
 export async function tryToApplyPremium(user) {
   const role = user.role;
-  if (!role instanceof Member) {
+  if (role instanceof Premium) {
     return;
   }
 

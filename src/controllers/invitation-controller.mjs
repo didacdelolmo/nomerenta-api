@@ -1,6 +1,10 @@
 import constants from '../config/constants.mjs';
 import * as invitationService from '../services/invitation-service.mjs';
 
+export async function getCurrentUserInvitations(req, res) {
+  res.send(await invitationService.getByOwner(req.session.userId));
+}
+
 export async function createCurrentUserInvitations(req, res) {
   res.send(
     await invitationService.createMany(
@@ -10,14 +14,3 @@ export async function createCurrentUserInvitations(req, res) {
     )
   );
 }
-
-// export async function createUserInvitations(req, res) {
-//   res.send(
-//     await invitationService.create(
-//       req.body.userId,
-//       req.body.email,
-//       req.body.amount,
-//       req.body.reusable
-//     )
-//   );
-// }
