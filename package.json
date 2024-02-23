@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node index.mjs",
     "dev": "nodemon index.mjs",
-    "test": "cross-env MONGODB_TEST_URI=mongodb://localhost:27017/nomerenta-db-test mocha --timeout 5000 --reporter mochawesome ./tests/**/*.mjs"
+    "test": "cross-env MONGODB_TEST_URI=mongodb://localhost:27017/nomerenta-db-test mocha --timeout 5000 --reporter mochawesome ./tests/**/*.mjs",
+    "pm2": "pm2 start index.mjs --name 'api'"
   },
   "keywords": [],
   "author": "",
