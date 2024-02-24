@@ -55,13 +55,6 @@ CommentSchema.pre('save', function (next) {
   next();
 });
 
-CommentSchema.post('save', function () {
-  postService.incrementCommentsCount(this.post);
-});
-CommentSchema.post('remove', function () {
-  postService.decrementCommentsCount(this.post);
-});
-
 CommentSchema.plugin(autopopulate);
 
 const CommentModel = model('Comment', CommentSchema);

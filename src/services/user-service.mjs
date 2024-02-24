@@ -111,6 +111,7 @@ export async function setAvatar(userId, avatar) {
 
   const fileName = userId + extname(sanitizedAvatar);
 
+  // Must create this folder first otherwise it throws error on production
   const absolutePath = resolve(dirString, `../../assets/avatars/${fileName}`);
 
   if (avatar.size > 1 * (1024 * 1024)) {

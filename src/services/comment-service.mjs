@@ -52,6 +52,9 @@ export async function create(authorId, { postId, parentId = null, content }) {
     format: author.role.canFormatText,
   });
 
+  post.commentsCount += 1;
+  await post.save();
+
   let targetId;
   let message;
 
@@ -63,13 +66,15 @@ export async function create(authorId, { postId, parentId = null, content }) {
     message = `${author.username} ha puesto un comentario en tu publicación`;
   }
 
-  await notificationService.create({
-    senderId: authorId,
-    targetId,
-    postId,
-    commentId: comment._id,
-    message,
-  });
+  if (authorId !== targetId.toString()) {
+    await notificationService.create({
+      senderId: authorId,
+      targetId,
+      postId,
+      commentId: comment._id,
+      message,
+    });
+  }
 
   console.log(
     `💭 [comment-service]: ${authorId} has created a comment somewhere in earth`,
