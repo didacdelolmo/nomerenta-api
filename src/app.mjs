@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const allowedOrigins = [
   'http://127.0.0.1:5173',
   'https://nomerenta.com',
-  'https://nomerenta-app.vercel.app',
+  'https://www.nomerenta.com',
 ];
 
 app.use(
