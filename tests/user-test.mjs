@@ -77,9 +77,7 @@ describe('User endpoints', () => {
   });
 
   it('Should get all users whose username contain "didac"', async () => {
-    const response = await supertest(app)
-      .get('/users')
-      .send({ username: 'didac' });
+    const response = await supertest(app).get('/users?username=didac');
 
     assert.strictEqual(response.status, 200);
   });

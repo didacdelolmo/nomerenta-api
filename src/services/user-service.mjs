@@ -18,8 +18,8 @@ const stripe = new Stripe(STRIPE_API_KEY);
 
 export async function getById(userId, includeHashedPassword = false) {
   return UserModel.findById(userId).select(
-    includeHashedPassword ? '+hashedPassword' : '-hashedPassword'
-  );
+    includeHashedPassword ? '+hashedPassword +followers' : '-hashedPassword +followers'
+  )
 }
 
 export async function getByUsername(username, includeHashedPassword = false) {
