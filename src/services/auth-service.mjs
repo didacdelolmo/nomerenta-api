@@ -12,7 +12,7 @@ export async function register({
   roleId = RoleIdentifier.MEMBER,
   code,
 }) {
-  if (username.length >= 16) {
+  if (username.length >= 20) {
     throw new IdentifiedError(
       ErrorCode.USERNAME_TOO_LONG,
       'Nombre demasiado largo'
