@@ -28,12 +28,12 @@ app.use(
     crossOriginResourcePolicy: false,
   })
 );
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 500,
-  })
-);
+// app.use(
+//   rateLimit({
+//     windowMs: 15 * 60 * 1000,
+//     max: 500,
+//   })
+// );
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
