@@ -10,7 +10,7 @@ export async function getById(postId) {
 }
 
 export async function getByAuthor(userId) {
-  return PostModel.find({ author: userId }).populate('author');
+  return PostModel.find({ author: userId }).populate('author').sort({ createdAt: -1 });
 }
 
 export async function getFeatured() {

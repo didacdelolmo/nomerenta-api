@@ -11,7 +11,7 @@ export async function getById(commentId) {
 }
 
 export async function getByAuthor(authorId) {
-  return CommentModel.find({ author: authorId }).populate('author post');
+  return CommentModel.find({ author: authorId }).populate('author post').sort({ createdAt: -1 });
 }
 
 export async function countByPost(postId) {

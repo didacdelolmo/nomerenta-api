@@ -5,7 +5,7 @@ export async function getAllPosts(req, res) {
 }
 
 export async function getFeaturedPosts(req, res) {
-  res.send(await postService.getFeaturedPosts);
+  res.send(await postService.getFeatured());
 }
 
 export async function getPost(req, res) {

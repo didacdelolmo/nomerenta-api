@@ -50,9 +50,20 @@ export async function createMany({
   const invitations = [];
 
   for (let i = 0; i < amount; i++) {
+    let code = '';
+    let unique = false;
+
+    while (!unique) {
+      code = generateInvitationCode();
+      const existsInvitation = await InvitationModel.findOne({ code });
+      if (!existsInvitation) {
+        unique = true;
+      }
+    }
+
     const invitation = await InvitationModel.create({
       owner,
-      code: generateInvitationCode(),
+      code,
       expirationDate,
       reusable,
     });

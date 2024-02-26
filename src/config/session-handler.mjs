@@ -14,13 +14,13 @@ const sessionHandler = session({
   secret: EXPRESS_SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  // store: new RedisStore({
-  //   client: new Redis({
-  //     port: +REDIS_PORT,
-  //     host: REDIS_HOST,
-  //     password: REDIS_PASSWORD,
-  //   }),
-  // }),
+  store: new RedisStore({
+    client: new Redis({
+      port: REDIS_PORT,
+      host: REDIS_HOST,
+      password: REDIS_PASSWORD,
+    }),
+  }),
   cookie: {
     secure: NODE_ENV === 'production',
     httpOnly: true,

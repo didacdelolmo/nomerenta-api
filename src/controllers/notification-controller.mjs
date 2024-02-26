@@ -10,6 +10,10 @@ export async function getCurrentUserUnseenNotificationsCount(req, res) {
   );
 }
 
+export async function markCurrentUserNotificationAsSeen(req, res) {
+  await notificationService.markAsSeen(req.session.userId, req.params.id)
+}
+
 export async function markCurrentUserNotificationsAsSeen(req, res) {
   await notificationService.markEverythingAsSeen(req.session.userId);
 
