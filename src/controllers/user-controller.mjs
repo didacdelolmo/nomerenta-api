@@ -24,7 +24,7 @@ export async function getAllUsers(req, res) {
 }
 
 export async function getCurrentUser(req, res) {
-  res.send(await userService.getById(req.session.userId));
+  res.send(await userService.getById(req.session.userId, false, true, true));
 }
 
 export async function getUser(req, res) {

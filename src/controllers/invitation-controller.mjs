@@ -7,10 +7,12 @@ export async function getCurrentUserInvitations(req, res) {
 
 export async function createCurrentUserInvitations(req, res) {
   res.send(
-    await invitationService.createMany(
-      req.session.userId,
-      req.body.email,
-      constants.DEFAULT_USER_INVITATIONS
-    )
+    await invitationService.createMany({
+      ownerId: req.session.userId,
+      email: req.body.email,
+      amount: constants.DEFAULT_USER_INVITATIONS,
+      reusable: false,
+      expirationDate: null,
+    })
   );
 }

@@ -10,7 +10,9 @@ export async function getById(postId) {
 }
 
 export async function getByAuthor(userId) {
-  return PostModel.find({ author: userId }).populate('author').sort({ createdAt: -1 });
+  return PostModel.find({ author: userId })
+    .populate('author')
+    .sort({ createdAt: -1 });
 }
 
 export async function getFeatured() {
@@ -18,7 +20,9 @@ export async function getFeatured() {
 }
 
 export async function getByFollows(userId) {
-  const user = await UserModel.findById(userId).select('following');
+  const user = await UserModel.findById(userId)
+    .sort({ createdAt: -1 })
+    .select('following');
   if (!user) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Este usuario no existe');
   }

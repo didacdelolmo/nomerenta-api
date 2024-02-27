@@ -16,10 +16,26 @@ import Premium from '../roles/presets/premium.mjs';
 const { STRIPE_API_KEY } = process.env;
 const stripe = new Stripe(STRIPE_API_KEY);
 
-export async function getById(userId, includeHashedPassword = false) {
-  return UserModel.findById(userId).select(
-    includeHashedPassword ? '+hashedPassword +followers' : '-hashedPassword +followers'
-  )
+export async function getById(
+  userId,
+  includeHashedPassword = false,
+  includeFollowers = true,
+  includeEmail = false
+) {
+  let fieldsToSelect = [];
+
+  if (includeHashedPassword) {
+    fieldsToSelect.push('+hashedPassword');
+  }
+  if (includeFollowers) {
+    fieldsToSelect.push('+followers');
+  }
+  if (includeEmail) {
+    fieldsToSelect.push('+email');
+  }
+  const selectionString = fieldsToSelect.join(' ');
+
+  return UserModel.findById(userId).select(selectionString);
 }
 
 export async function getByUsername(username, includeHashedPassword = false) {
