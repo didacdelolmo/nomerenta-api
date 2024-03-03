@@ -10,7 +10,11 @@ const router = express.Router();
 
 router.get('/replacements', async (req, res, next) => {
   try {
-    res.send(await ReplacementModel.findOne());
+    const document = await ReplacementModel.findOne();
+    document.replacements.sort((a, b) =>
+      a.originalText.localeCompare(b.originalText)
+    );
+    res.send(document);
   } catch (error) {
     next(error);
   }
