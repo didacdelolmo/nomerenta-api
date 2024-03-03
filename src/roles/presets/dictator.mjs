@@ -4,6 +4,7 @@ class Dictator extends Premium {
   canSetOutsiderBiography = true;
   canSetOutsiderFlair = true;
   canFeaturePosts = true;
+  canUpdateReplacements = true;
 }
 
 export default Dictator;

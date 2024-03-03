@@ -5,6 +5,6 @@ export const initializeCounter = async () => {
   if (!existsCounter) {
     await CounterModel.create({});
 
-    console.log('⌚ [counter] Created the initial counter document');
+    console.log('⌚ [counter]: Created the initial counter document');
   }
 };

@@ -38,6 +38,8 @@ const ActionSchema = new Schema({
 const UserSchema = new Schema(
   {
     email: { type: String, default: null, select: false },
+    firstName: { type: String, default: null, select: false },
+    lastName: { type: String, default: null, select: false },
     username: { type: String, required: true, unique: true, index: true },
     hashedPassword: { type: String, required: true, select: false },
     avatar: { type: String, default: null },

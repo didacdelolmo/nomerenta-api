@@ -50,8 +50,6 @@ class InvitationFixture {
 
     this._id = invitations[0]._id.toString();
     this.code = invitations[0].code;
-
-    console.log('invitations are', invitations)
   }
 }
 

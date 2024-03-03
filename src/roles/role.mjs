@@ -5,6 +5,7 @@ class Role {
   canSetOutsiderFlair = false;
   canFeaturePosts = false;
   canUploadImage = false;
+  canUpdateReplacements = false;
 }
 
 export default Role;

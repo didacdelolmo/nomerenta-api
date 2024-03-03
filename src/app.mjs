@@ -7,17 +7,22 @@ import imageRouter from './routers/image-router.mjs';
 import counterRouter from './routers/counter-router.mjs';
 import commentRouter from './routers/comment-router.mjs';
 import invitationRouter from './routers/invitation-router.mjs';
+import replacementRouter from './routers/replacement-router.mjs';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import { sessionHandler } from './config/session-handler.mjs';
 import { errorHandler } from './errors/error-handler.mjs';
 import { initializeCounter } from './config/counter.mjs';
-import { rateLimit } from 'express-rate-limit';
+// import { rateLimit } from 'express-rate-limit';
 import { trackVisit } from './middleware/track-visit.mjs';
+import { initializeReplacement } from './utils/replacement.mjs';
 
 initializeCounter().catch((error) => {
   console.error('❌ [counter]: Something went wrong:', error);
+});
+initializeReplacement().catch((error) => {
+  console.error('❌ [replacement]: Something went wrong:', error);
 });
 
 const app = express();
@@ -73,6 +78,7 @@ app.use(notificationRouter);
 app.use(counterRouter);
 app.use(invitationRouter);
 app.use(imageRouter);
+app.use(replacementRouter);
 
 app.use(errorHandler);
 
