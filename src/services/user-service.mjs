@@ -112,14 +112,6 @@ export async function setAvatar(userId, avatar) {
     throw new IdentifiedError(ErrorCode.INVALID_USER, 'Usuario inválido');
   }
 
-  const role = user.role;
-  if (!role.canSetAvatar) {
-    throw new IdentifiedError(
-      ErrorCode.INSUFFICIENT_PERMISSIONS,
-      'Cambia tu foto de perfil con PREMIUM'
-    );
-  }
-
   const sanitizedAvatar = sanitize(avatar.originalname);
 
   const pathString = fileURLToPath(import.meta.url);
