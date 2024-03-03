@@ -3,6 +3,7 @@ import express from 'express';
 import userRouter from './routers/user-router.mjs';
 import notificationRouter from './routers/notification-router.mjs';
 import postRouter from './routers/post-router.mjs';
+import imageRouter from './routers/image-router.mjs';
 import counterRouter from './routers/counter-router.mjs';
 import commentRouter from './routers/comment-router.mjs';
 import invitationRouter from './routers/invitation-router.mjs';
@@ -63,6 +64,7 @@ app.use(sessionHandler);
 app.use(trackVisit);
 
 app.use('/avatars', express.static('assets/avatars'));
+app.use('/images', express.static('assets/images'));
 
 app.use(userRouter);
 app.use(postRouter);
@@ -70,6 +72,7 @@ app.use(commentRouter);
 app.use(notificationRouter);
 app.use(counterRouter);
 app.use(invitationRouter);
+app.use(imageRouter);
 
 app.use(errorHandler);
 

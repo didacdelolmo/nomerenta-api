@@ -133,7 +133,7 @@ export async function setAvatar(userId, avatar) {
   if (avatar.size > 1 * (1024 * 1024)) {
     throw new IdentifiedError(
       ErrorCode.IMAGE_TOO_BIG,
-      'La imagen es demasiado grande'
+      'La imagen no puede pesar más de 1MB'
     );
   }
 
@@ -141,10 +141,10 @@ export async function setAvatar(userId, avatar) {
     .resize(256, 256)
     .toFile(absolutePath);
 
-  if (resizeResult.size > 1 * 1024 * 1024) {
+  if (resizeResult.size > 1 * (1024 * 1024)) {
     throw new IdentifiedError(
       ErrorCode.IMAGE_TOO_BIG,
-      'La imagen es demasiado grande'
+      'La imagen no puede pesar más de 1MB'
     );
   }
 

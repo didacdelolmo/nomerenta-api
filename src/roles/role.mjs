@@ -4,6 +4,7 @@ class Role {
   canSetOutsiderBiography = false;
   canSetOutsiderFlair = false;
   canFeaturePosts = false;
+  canUploadImage = false;
 }
 
 export default Role;

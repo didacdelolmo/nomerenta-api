@@ -3,7 +3,7 @@ import IdentifiedError from '../errors/identified-error.mjs';
 import path from 'path';
 
 export const imageFilter = (req, file, cb) => {
-  const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+  const allowedExtensions = ['.jpg', '.jpeg', '.png'];
   const fileExtension = path.extname(file.originalname).toLowerCase();
 
   if (allowedExtensions.includes(fileExtension)) {
